@@ -46,7 +46,7 @@ After you're up and running
 
 * Validate address: make sure an address is entered.
 * Validate rate: must be above 5%
-* Validate loan amount: must 
+* Validate loan amount: must be a number over $50,000.
 
 
 ### /funding
