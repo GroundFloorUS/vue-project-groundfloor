@@ -4,15 +4,10 @@
 
     <ul class="funded-list">
       <li v-for="investment in funded" :key="investment.id">
-        <nuxt-link :to="'/investment/' + investment.id">
-          {{ investment.address }}
-        </nuxt-link>
-        <p>
-          {{ investment.loan_amount_dollars }}
-        </p>
+        <nuxt-link :to="'/investment/' + investment.id">{{ investment.address }}</nuxt-link>
+        <p>{{ investment.loan_amount_dollars }}</p>
       </li>
     </ul>
-
   </b-container>
 </template>
 
