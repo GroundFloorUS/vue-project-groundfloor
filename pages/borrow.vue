@@ -13,7 +13,14 @@
       </b-form-group>
 
       <b-form-group label="Address" label-for="address">
-        <b-form-input id="address" v-model="address" type="text" name="address" />
+        <b-form-input
+          id="address"
+          v-model="address"
+          :state="validateAddress"
+          type="text"
+          name="address"
+        />
+        <b-form-invalid-feedback id="input-live-feedback">Full address must be entered</b-form-invalid-feedback>
       </b-form-group>
 
       <b-form-group label="Rate" label-for="rate">
@@ -98,6 +105,9 @@ export default {
     },
     validateLoan() {
       return this.loan_amount_dollars > 50000 ? true : false
+    },
+    validateAddress() {
+      return this.address.length > 15 ? true : false
     }
   },
   methods: {

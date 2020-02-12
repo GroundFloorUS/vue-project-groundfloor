@@ -2,7 +2,7 @@
   <div>
     <GFHeader />
     <main>
-      <nuxt/>
+      <nuxt />
     </main>
   </div>
 </template>
@@ -68,5 +68,10 @@ html {
 
 main {
   margin-top: 2em;
+}
+
+.funding-list li {
+  list-style: none;
+  padding-left: 0 px;
 }
 </style>
