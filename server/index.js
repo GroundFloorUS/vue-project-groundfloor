@@ -8,7 +8,7 @@ const db = require('./db')
 
 const app = express()
 const host = process.env.HOST || '127.0.0.1'
-const port = process.env.PORT || 3333
+const port = 3333
 
 app.set('port', port)
 app.use(bodyParser.json())
