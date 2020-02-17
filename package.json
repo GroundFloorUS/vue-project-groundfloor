@@ -22,10 +22,14 @@
     "eslint-utils": "^1.4.3",
     "express": "^4.16.3",
     "morgan": "^1.9.1",
+    "node-sass": "^4.13.1",
     "nuxt": "^2.0.0",
+    "sass-loader": "^8.0.2",
+    "scss-loader": "^0.0.1",
     "serialize-javascript": "2.1.1",
     "sqlite3": "^4.0.6",
-    "uuid": "^3.3.2"
+    "uuid": "^3.3.2",
+    "vuelidate": "^0.7.5"
   },
   "devDependencies": {
     "ava": "^1.1.0",

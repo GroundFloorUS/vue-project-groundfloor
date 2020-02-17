@@ -4,21 +4,17 @@
 
     <ul class="funding-list">
       <li v-for="investment in funding" :key="investment.id">
-        <p>
-          <nuxt-link :to="'/investment/' + investment.id">
-            {{ investment.address }}
-          </nuxt-link>
-        </p>
-        <p>
-          {{ investment.loan_amount_dollars }}
-        </p>
+        <FundCard :investment="investment"/>
       </li>
     </ul>
   </b-container>
 </template>
 
 <script>
+import FundCard from '../components/FundCard'
+
 export default {
+  components: { FundCard },
   async asyncData({ $axios }) {
     let funding = await $axios.get('/api/funding')
     return {
@@ -27,3 +23,12 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+ul.funding-list {
+  list-style: none;
+  li {
+    padding-bottom: 10px;
+  }
+}
+</style>
