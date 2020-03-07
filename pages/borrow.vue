@@ -20,6 +20,7 @@
                     label-for="address">
         <b-form-input id="address"
                       v-model="address"
+                      :class="addressHasError"
                       type="text"
                       name="address" />
       </b-form-group>
@@ -29,6 +30,7 @@
         <b-input-group>
           <b-form-input id="rate"
                         v-model="rate"
+                        :class="rateHasError"
                         type="number"
                         name="rate"/>
           <b-input-group-append>
@@ -58,6 +60,7 @@
           </b-input-group-prepend>
           <b-form-input id="loan_amount_dollars"
                         v-model="loan_amount_dollars"
+                        :class="LoanAmountHasError"
                         type="number"
                         name="loan_amount_dollars"/>
         </b-input-group>
@@ -87,7 +90,10 @@ export default {
       rate: 10,
       expected_term_months: 12,
       loan_amount_dollars: 100000,
-      errors: []
+      errors: [],
+      addressHasError: '',
+      rateHasError: '',
+      loanAmountHasError: ''
     }
   },
   methods: {
@@ -102,12 +108,15 @@ export default {
       }
       if (!addressIsValid) {
         this.errors.push('A valid email address is required.')
+        this.addressHasError = 'is-invalid'
       }
       if (!rateIsValid) {
         this.errors.push('Rate must be at least 5.')
+        this.rateHasError = 'is-invalid'
       }
       if (!loanAmountIsValid) {
         this.errors.push('Loan amount must be at least 50000.')
+        this.loanAmountHasError = 'is-invalid'
       }
     },
 
