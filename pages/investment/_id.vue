@@ -66,6 +66,8 @@ export default {
           investment_id: id
         }
       })
+      // hack
+      // TODO: learn best way to dynamically reload a VUE component
       location.reload()
     }
   }
