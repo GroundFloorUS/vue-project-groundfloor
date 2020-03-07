@@ -60,7 +60,7 @@
           </b-input-group-prepend>
           <b-form-input id="loan_amount_dollars"
                         v-model="loan_amount_dollars"
-                        :class="LoanAmountHasError"
+                        :class="loanAmountHasError"
                         type="number"
                         name="loan_amount_dollars"/>
         </b-input-group>
@@ -97,8 +97,15 @@ export default {
     }
   },
   methods: {
-    checkForm(address, rate, loan_amount_dollars) {
+    clearErrors() {
       this.errors = []
+      this.addressHasError = ''
+      this.rateHasError = ''
+      this.loanAmountHasError = ''
+    },
+
+    checkForm(address, rate, loan_amount_dollars) {
+      this.clearErrors()
       const addressIsValid = this.isAddressValid(address)
       const rateIsValid = this.isRateValid(rate)
       const loanAmountIsValid = this.isLoanAmountValid(loan_amount_dollars)
