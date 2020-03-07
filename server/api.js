@@ -5,7 +5,7 @@ let api = express.Router()
 
 api.get('/funding', (req, res, next) => {
   db.all(
-    `SELECT * FROM investment 
+    `SELECT * FROM investment
        WHERE fully_funded = 0
        ORDER BY created_on DESC
     `,
@@ -20,7 +20,7 @@ api.get('/funding', (req, res, next) => {
 
 api.get('/funded', (req, res, next) => {
   db.all(
-    `SELECT * FROM investment 
+    `SELECT * FROM investment
        WHERE fully_funded = 1
        ORDER BY created_on DESC
     `,
@@ -90,7 +90,7 @@ api.post('/investment', (req, res, next) => {
 
   db.serialize(() => {
     db.run(
-      `INSERT INTO investment 
+      `INSERT INTO investment
         (purpose, address, rate, expected_term_months, loan_amount_dollars)
        VALUES (?, ?, ?, ?, ?);
       `,
@@ -118,7 +118,6 @@ api.post('/investment', (req, res, next) => {
 
 api.post('/funding', (req, res, next) => {
   let { investment_id, amount } = req.body
-
   db.serialize(() => {
     db.run(
       `INSERT INTO funding
@@ -133,7 +132,7 @@ api.post('/funding', (req, res, next) => {
         db.get(
           `SELECT id, investment_id, amount, created_on
            FROM funding WHERE rowid = ?`,
-          [this.lastID],
+          [investment_id],
           (err, row) => {
             if (err) {
               next(err)
