@@ -2,12 +2,12 @@
   <b-container>
     <h1 class="title">LOAN</h1>
     <p>Address: {{ investment.address }}</p>
-    <p>Amount requested: {{ investment.loan_amount_dollars }}</p>
+    <p>Amount requested: ${{ investment.loan_amount_dollars }}</p>
     <p>Purpose: {{ investment.purpose }}</p>
 
     <section class="investment_funds">
       <h3 class="subtitle">Loan Funds</h3>
-      <table :key="tableKey" class="table table-striped">
+      <table class="table table-striped">
         <thead>
           <tr>
             <th>Amount</th>
@@ -48,8 +48,7 @@ export default {
       investment: investment.data,
       funds: funds.data,
       amount: '',
-      id: investment.data.id,
-      tableKey: 0
+      id: investment.data.id
     }
   },
   methods: {

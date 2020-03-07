@@ -132,7 +132,7 @@ api.post('/funding', (req, res, next) => {
         db.get(
           `SELECT id, investment_id, amount, created_on
            FROM funding WHERE rowid = ?`,
-          [investment_id],
+          [this.lastID],
           (err, row) => {
             if (err) {
               next(err)
