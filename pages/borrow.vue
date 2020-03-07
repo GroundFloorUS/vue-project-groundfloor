@@ -21,8 +21,7 @@
         <b-form-input id="address"
                       v-model="address"
                       type="text"
-                      name="address"
-                      required />
+                      name="address" />
       </b-form-group>
 
       <b-form-group label="Rate"
@@ -51,7 +50,7 @@
         </b-input-group>
       </b-form-group>
 
-      <b-form-group label="LoanAmount"
+      <b-form-group label="Loan Amount"
                     label-for="loan_amount_dollars">
         <b-input-group>
           <b-input-group-prepend>
@@ -94,21 +93,21 @@ export default {
   methods: {
     checkForm(address, rate, loan_amount_dollars) {
       this.errors = []
-      if (
-        this.isAddressValid(address) &&
-        this.isRateValid(rate) &&
-        this.isLoanAmountValid(loan_amount_dollars)
-      ) {
+      const addressIsValid = this.isAddressValid(address)
+      const rateIsValid = this.isRateValid(rate)
+      const loanAmountIsValid = this.isLoanAmountValid(loan_amount_dollars)
+
+      if (addressIsValid && rateIsValid && loanAmountIsValid) {
         return true
       }
-      if (!this.isAddressValid(address)) {
-        this.errors.push('Address is wrong.')
+      if (!addressIsValid) {
+        this.errors.push('A valid email address is required.')
       }
-      if (!this.isRateValid(rate)) {
-        this.errors.push('Rate is wrong.')
+      if (!rateIsValid) {
+        this.errors.push('Rate must be at least 5.')
       }
-      if (!this.isLoanAmountValid(loan_amount_dollars)) {
-        this.errors.push('Loan amount is wrong.')
+      if (!loanAmountIsValid) {
+        this.errors.push('Loan amount must be at least 50000.')
       }
     },
 
@@ -118,26 +117,18 @@ export default {
     },
 
     isRateValid(rate) {
-      let isValid = false
-      if (rate >= 5) {
-        isValid = true
-      }
-      return isValid
+      return rate >= 5
     },
 
     isLoanAmountValid(loanAmount) {
-      let isValid = false
-      if (loanAmount >= 50000) {
-        isValid = true
-      }
-      return isValid
+      return loanAmount >= 50000
     },
 
     async onSubmit(ev) {
       ev.preventDefault()
       let { address, rate, expected_term_months, loan_amount_dollars } = this
-      const validForm = this.checkForm(address, rate, loan_amount_dollars)
-      if (validForm) {
+      const formIsValid = this.checkForm(address, rate, loan_amount_dollars)
+      if (formIsValid) {
         let b = {
           purpose: this.purpose.value,
           address,
