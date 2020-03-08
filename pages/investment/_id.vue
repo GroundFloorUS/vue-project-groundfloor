@@ -22,9 +22,10 @@
         </tbody>
       </table>
     </section>
-
+    <p v-if="fullyFunded">This loan is fully funded!</p>
+    <p v-if="thisWillFullyFund">This amount will fully fund this investment!</p>
     <p>
-      <b-form type="button" vairant="success" @submit="onSubmit">
+      <b-form v-if="!fullyFunded" type="button" vairant="success" @submit="onSubmit" @keyup="onKeyUp">
         <b-form-group label="Amount you want to fund"
                       label-for="amount">
           <b-form-input id="amout"
@@ -32,9 +33,9 @@
                         type="number"
                         name="amount" />
         </b-form-group>
-        <b-button type="button" vairant="success" @click="goBack">Back</b-button>
         <b-button type="submit" variant="primary">Submit</b-button>
       </b-form>
+      <b-button type="button" vairant="success" @click="goBack">Back</b-button>
     </p>
 
   </b-container>
@@ -48,12 +49,47 @@ export default {
       investment: investment.data,
       funds: funds.data,
       amount: '',
-      id: investment.data.id
+      id: investment.data.id,
+      fullyFunded: false,
+      thisWillFullyFund: false
+    }
+  },
+  mounted() {
+    if (this.isAlreadyFullyFunded()) {
+      this.fullyFunded = true
     }
   },
   methods: {
     goBack() {
       this.$router.back()
+    },
+    getTotalFunded(funds) {
+      let total = 0
+      funds.forEach(fund => {
+        total += parseInt(fund.amount)
+      })
+      return total
+    },
+    isAlreadyFullyFunded() {
+      const totalFundedSoFar = this.getTotalFunded(this.funds)
+      return totalFundedSoFar >= this.investment.loan_amount_dollars
+    },
+    checkIfWillBeFullyFunded(keyedAmount) {
+      const totalFundedSoFar = this.getTotalFunded(this.funds)
+      if (
+        parseInt(keyedAmount) + parseInt(totalFundedSoFar) >=
+        this.investment.loan_amount_dollars
+      ) {
+        return true
+      }
+      return false
+    },
+    onKeyUp(ev) {
+      this.thisWillFullyFund = false
+      let { amount } = this
+      if (this.checkIfWillBeFullyFunded(amount)) {
+        this.thisWillFullyFund = true
+      }
     },
     async onSubmit(ev) {
       ev.preventDefault()
