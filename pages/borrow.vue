@@ -53,7 +53,7 @@
         </b-input-group>
       </b-form-group>
 
-      <b-form-group label="LoanAmount" label-for="loan_amount_dollars">
+      <b-form-group label="Loan Amount" label-for="loan_amount_dollars">
         <b-input-group>
           <b-input-group-prepend>
             <span class="input-group-text">$</span>

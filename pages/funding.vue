@@ -53,10 +53,7 @@ export default {
   font: 200 20px/1.5 Helvetica, Verdana, sans-serif;
   border: 5px solid #ccc;
   padding: 10px 10px 0px 10px;
-}
-
-.funding-list > li:last-child {
-  border-top: 0px;
+  margin-bottom: 10px;
 }
 
 .title {
