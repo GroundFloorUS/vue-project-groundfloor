@@ -23,7 +23,7 @@
       </table>
     </section>
     <p v-if="fullyFunded" class="text-success">This loan is fully funded!</p>
-    <p v-if="thisWillFullyFund" class="text-success">This amount will fully fund this loan!</p>
+    <p v-if="willFullyFund" class="text-success">This amount will fully fund this loan!</p>
     <p>
       <b-form v-if="!fullyFunded" class="mb-2" type="button" vairant="success" @submit="onSubmit" @keyup="onKeyUp">
         <b-form-group label="Amount you want to fund"
@@ -51,7 +51,7 @@ export default {
       amount: '',
       id: investment.data.id,
       fullyFunded: false,
-      thisWillFullyFund: false
+      willFullyFund: false
     }
   },
   mounted() {
@@ -79,21 +79,15 @@ export default {
 
     checkIfWillBeFullyFunded(keyedAmount) {
       const totalFundedSoFar = this.calculateTotalFunded()
-      if (
+      return (
         parseInt(keyedAmount) + parseInt(totalFundedSoFar) >=
         this.investment.loan_amount_dollars
-      ) {
-        return true
-      }
-      return false
+      )
     },
 
     onKeyUp() {
-      this.thisWillFullyFund = false
       let { amount } = this
-      if (this.checkIfWillBeFullyFunded(amount)) {
-        this.thisWillFullyFund = true
-      }
+      this.willFullyFund = this.checkIfWillBeFullyFunded(amount) ? true : false
     },
 
     setFunded() {
