@@ -2,16 +2,27 @@
   <b-container>
     <h2 class="title">FUNDED</h2>
 
-    <ul class="funded-list">
-      <li v-for="investment in funded" :key="investment.id">
-        <nuxt-link :to="'/investment/' + investment.id">
-          {{ investment.address }}
-        </nuxt-link>
-        <p>
-          {{ investment.loan_amount_dollars }}
-        </p>
-      </li>
-    </ul>
+    <table class="funded-list table table-striped">
+      <thead>
+        <tr>
+          <th>Address</th>
+          <th>Loan Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="investment in funded" :key="investment.id">
+          <td>
+            <nuxt-link :to="'/investment/' + investment.id">
+              {{ investment.address }}
+            </nuxt-link>
+          </td>
+          <td>
+            {{ investment.loan_amount_dollars }}
+          </td>
+        </tr>
+      </tbody>
+
+    </table>
 
   </b-container>
 </template>

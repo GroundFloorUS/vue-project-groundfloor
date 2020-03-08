@@ -116,6 +116,24 @@ api.post('/investment', (req, res, next) => {
   })
 })
 
+api.post('/setFunded', (req, res, next) => {
+  let { investment_id } = req.body
+  db.serialize(() => {
+    db.run(
+      `UPDATE investment
+       SET fully_funded = 1
+       WHERE id = ?;
+      `,
+      [investment_id],
+      err => {
+        if (err) {
+          next(err)
+        }
+      }
+    )
+  })
+})
+
 api.post('/funding', (req, res, next) => {
   let { investment_id, amount } = req.body
   db.serialize(() => {
@@ -134,6 +152,7 @@ api.post('/funding', (req, res, next) => {
            FROM funding WHERE rowid = ?`,
           [this.lastID],
           (err, row) => {
+            console.log('-----------', row)
             if (err) {
               next(err)
             }
