@@ -112,7 +112,7 @@ export default {
           investment_id: id
         }
       })
-      if (this.thisWillFullyFund) {
+      if (this.willFullyFund) {
         this.setFunded()
       }
       // hack
