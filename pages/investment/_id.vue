@@ -45,7 +45,6 @@ export default {
   async asyncData({ $axios, params }) {
     let investment = await $axios.get(`/api/investment/${params.id}`)
     let funds = await $axios.get(`/api/investment/${params.id}/funds`)
-    console.log('investment.data => ', investment.data)
     return {
       investment: investment.data,
       funds: funds.data,

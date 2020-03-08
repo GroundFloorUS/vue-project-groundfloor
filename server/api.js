@@ -152,7 +152,6 @@ api.post('/funding', (req, res, next) => {
            FROM funding WHERE rowid = ?`,
           [this.lastID],
           (err, row) => {
-            console.log('-----------', row)
             if (err) {
               next(err)
             }
