@@ -88,7 +88,7 @@ export default {
       return false
     },
 
-    onKeyUp(ev) {
+    onKeyUp() {
       this.thisWillFullyFund = false
       let { amount } = this
       if (this.checkIfWillBeFullyFunded(amount)) {
