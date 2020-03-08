@@ -1,7 +1,7 @@
 <template>
   <b-container>
     <h2 class="title">BORROW</h2>
-    <p v-if="errors.length" class="alert-danger">
+    <p v-if="errors.length" class="alert-danger pl-2 pr-2">
       <b>Please correct the following error(s):</b>
       <ul>
         <li v-for="error in errors" :key="error">{{ error }}</li>
