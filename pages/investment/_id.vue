@@ -25,7 +25,7 @@
     <p v-if="fullyFunded" class="text-success">This loan is fully funded!</p>
     <p v-if="thisWillFullyFund" class="text-success">This amount will fully fund this loan!</p>
     <p>
-      <b-form v-if="!fullyFunded" type="button" vairant="success" @submit="onSubmit" @keyup="onKeyUp">
+      <b-form v-if="!fullyFunded" class="mb-2" type="button" vairant="success" @submit="onSubmit" @keyup="onKeyUp">
         <b-form-group label="Amount you want to fund"
                       label-for="amount">
           <b-form-input id="amout"
