@@ -106,6 +106,7 @@ export default {
         }
       })
     },
+
     async onSubmit(ev) {
       ev.preventDefault()
       let { amount, id } = this
