@@ -17,6 +17,9 @@
           Expected Term: {{ investment.expected_term_months }} Months
         </p>
         <p>
+          Loan Amount Funded: ${{ investment.funded_amount_dollars }} 
+        </p>
+        <p>
           Loan Amount (Dollars): ${{ investment.loan_amount_dollars }}&nbsp;
           <b-button type="button" vairant="success" @click="invest(investment.id)">
             Invest

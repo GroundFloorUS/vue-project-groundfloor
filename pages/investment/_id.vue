@@ -3,7 +3,8 @@
     <h1 class="title">LOAN</h1>
     <p>Address: {{ investment.address }}</p>
     <p>Purpose: {{ investment.purpose }}</p>
-    <p>Total Investment Required: ${{ investment.loan_amount_dollars }}</p>
+    <p>Total Amount Of Loan: ${{ investment.loan_amount_dollars }}</p>
+    <p>Total Amount Funded: ${{ investment.funded_amount_dollars }}</p>
 
     <b-form @submit="onSubmit">
       <b-form-group label="Loan Amount" label-for="amount">
@@ -92,7 +93,7 @@ export default {
       this.$router.go()
     },
     goBack() {
-      this.$router.back()
+      this.$router.push({ path: `/funding` })
     }
   }
 }

@@ -5,7 +5,8 @@ let api = express.Router()
 
 api.get('/funding', (req, res, next) => {
   db.all(
-    `SELECT * FROM investment 
+    `SELECT investment.*, ifnull((SELECT SUM(amount) FROM funding WHERE investment_id = investment.id), 0) AS funded_amount_dollars
+       FROM investment 
        WHERE fully_funded = 0
        ORDER BY created_on DESC
     `,
@@ -36,7 +37,8 @@ api.get('/funded', (req, res, next) => {
 api.get('/investment/:id', (req, res, next) => {
   db.get(
     `SELECT id, purpose, address, rate, expected_term_months, loan_amount_dollars,
-                  fully_funded, created_on
+            fully_funded, created_on,
+            ifnull((SELECT SUM(amount) FROM funding WHERE investment_id = investment.id), 0) AS funded_amount_dollars
            FROM investment WHERE id = ?`,
     [Number(req.params.id)],
     (err, row) => {
