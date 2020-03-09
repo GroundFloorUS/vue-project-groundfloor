@@ -5,6 +5,7 @@
     <p>Purpose: {{ investment.purpose }}</p>
     <p>Total Amount Of Loan: ${{ investment.loan_amount_dollars }}</p>
     <p>Total Amount Funded: ${{ investment.funded_amount_dollars }}</p>
+    <p>Total Amount Remaining to Fund: ${{ amountRemainingToFund }}</p>
 
     <b-form @submit="onSubmit">
       <b-form-group label="Loan Amount" label-for="amount">
@@ -64,9 +65,13 @@ export default {
       return this.isNumeric(this.amount) === false || this.amount < 1
     },
     loanAmountExceeded: function() {
+      return this.amountRemainingToFund < 0
+    },
+    amountRemainingToFund: function() {
       return (
-        this.investment.funded_amount_dollars + this.amount >
-        this.investment.loan_amount_dollars
+        this.investment.loan_amount_dollars -
+        this.investment.funded_amount_dollars -
+        this.amount
       )
     }
   },
@@ -105,10 +110,7 @@ export default {
         data: b
       })
 
-      if (
-        this.investment.funded_amount_dollars + this.amount ==
-        this.investment.loan_amount_dollars
-      ) {
+      if (this.amountRemainingToFund === 0) {
         let c = {
           investment_id: this.investment.id
         }
