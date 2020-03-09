@@ -15,11 +15,11 @@
           <b-form-input
             id="amount"
             v-model="amount"
-            :class="{ 'is-invalid': attemptSubmit && wrongAmount }"
+            :class="{ 'is-invalid': attemptSubmit && (wrongAmount || loanAmountExceeded) }"
             type="number"
             name="amount"
           />
-          <div class="invalid-feedback">Make sure this is a number greater than 0.</div>
+          <div class="invalid-feedback">{{ message }}</div>
         </b-input-group>
       </b-form-group>
 
@@ -55,12 +55,19 @@ export default {
   data() {
     return {
       amount: 0,
-      attemptSubmit: false
+      attemptSubmit: false,
+      message: ''
     }
   },
   computed: {
     wrongAmount: function() {
       return this.isNumeric(this.amount) === false || this.amount < 1
+    },
+    loanAmountExceeded: function() {
+      return (
+        this.investment.funded_amount_dollars + this.amount >
+        this.investment.loan_amount_dollars
+      )
     }
   },
   async asyncData({ $axios, params }) {
@@ -78,7 +85,14 @@ export default {
     async onSubmit(ev) {
       ev.preventDefault()
       this.attemptSubmit = true
-      if (this.wrongAmount) return
+      if (this.wrongAmount) {
+        this.message = 'Make sure this is a number greater than 0.'
+        return
+      }
+      if (this.loanAmountExceeded) {
+        this.message = 'Total amount funded cannot exceed total loan amount.'
+        return
+      }
 
       let b = {
         investment_id: this.investment.id,
@@ -90,6 +104,21 @@ export default {
         url: '/api/funding',
         data: b
       })
+
+      if (
+        this.investment.funded_amount_dollars + this.amount ==
+        this.investment.loan_amount_dollars
+      ) {
+        let c = {
+          investment_id: this.investment.id
+        }
+        let fully = await this.$axios({
+          method: 'post',
+          url: '/api/investment/fully_funded',
+          data: c
+        })
+      }
+
       this.$router.go()
     },
     goBack() {

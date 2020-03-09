@@ -148,4 +148,33 @@ api.post('/funding', (req, res, next) => {
   })
 })
 
+api.post('/investment/fully_funded/', (req, res, next) => {
+  let { investment_id } = req.body
+
+  db.serialize(() => {
+    db.run(
+      `UPDATE investment
+       SET fully_funded = 1
+       WHERE id = ?`,
+      [investment_id],
+      err => {
+        if (err) {
+          next(err)
+        }
+        db.get(
+          `SELECT *
+           FROM investment WHERE id = ?`,
+          [investment_id],
+          (err, row) => {
+            if (err) {
+              next(err)
+            }
+            res.json(row)
+          }
+        )
+      }
+    )
+  })
+})
+
 module.exports = api

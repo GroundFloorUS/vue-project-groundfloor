@@ -21,8 +21,8 @@
         </p>
         <p>
           Loan Amount (Dollars): ${{ investment.loan_amount_dollars }}&nbsp;
-          <b-button type="button" vairant="success" @click="invest(investment.id)">
-            Invest
+          <b-button type="button" vairant="success" @click="investments(investment.id)">
+            Investments
           </b-button>
         </p>
       </li>
@@ -39,7 +39,7 @@ export default {
     }
   },
   methods: {
-    invest(id) {
+    investments(id) {
       document.location.href = '/investment/' + id
     }
   }
