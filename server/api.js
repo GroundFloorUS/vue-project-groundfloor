@@ -119,7 +119,42 @@ api.post('/investment', (req, res, next) => {
 api.post('/funding', (req, res, next) => {
   let { investment_id, amount } = req.body
 
-  db.serialize(() => {
+  db.serialize(async () => {
+    let investment
+    let fullyFunded
+    await db.get(
+      `SELECT loan_amount_dollars FROM investment WHERE rowid = ?`,
+      investment_id,
+      (err, row) => {
+        if (!err) {
+          investment = row
+        }
+      }
+    )
+    if (investment && investment.loan_amount_dollars) {
+      await db.all(
+        `SELECT id, investment_id, amount, created_on
+        FROM funding WHERE investment_id = ?`,
+        investment_id,
+        (err, rows) => {
+          let total = 0
+          if (err) {
+            next(err)
+          }
+          rows.forEach(fund => (total += fund.amount))
+          if (amount + total >= investment.loan_amount_dollars) {
+            db.run(
+              `UPDATE investment SET fully_funded = 1 WHERE rowid = ?`,
+              investment_id
+            )
+          }
+          return total
+        }
+      )
+      if (fullyFunded) {
+        return
+      }
+    }
     db.run(
       `INSERT INTO funding
         (investment_id, amount)

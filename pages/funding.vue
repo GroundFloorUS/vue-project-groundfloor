@@ -4,21 +4,16 @@
 
     <ul class="funding-list">
       <li v-for="investment in funding" :key="investment.id">
-        <p>
-          <nuxt-link :to="'/investment/' + investment.id">
-            {{ investment.address }}
-          </nuxt-link>
-        </p>
-        <p>
-          {{ investment.loan_amount_dollars }}
-        </p>
+        <Investment :investment="investment" />
       </li>
     </ul>
   </b-container>
 </template>
 
 <script>
+import Investment from '../components/Investment'
 export default {
+  components: { Investment },
   async asyncData({ $axios }) {
     let funding = await $axios.get('/api/funding')
     return {
@@ -27,3 +22,23 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+ul {
+  padding-left: 0;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+li {
+  margin-bottom: 10px;
+  list-style: none;
+  flex: 1 0 50%;
+}
+
+@media screen and (max-width: 800px) {
+  li {
+    flex: 1 0 100%;
+  }
+}
+</style>

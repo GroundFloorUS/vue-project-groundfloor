@@ -66,6 +66,8 @@
 </template>
 
 <script>
+const MINIMUM_LOAN_AMOUNT = 50000
+const MINIMUM_LOAN_RATE = 5
 export default {
   data() {
     return {
@@ -87,20 +89,37 @@ export default {
   methods: {
     async onSubmit(ev) {
       ev.preventDefault()
-      let { address, rate, expected_term_months, loan_amount_dollars } = this
-      let b = {
-        purpose: this.purpose.value,
-        address,
-        rate,
-        expected_term_months,
-        loan_amount_dollars
+      this.validate()
+      if (!this.errors.length) {
+        ev.preventDefault()
+        let { address, rate, expected_term_months, loan_amount_dollars } = this
+        let data = {
+          purpose: this.purpose.value,
+          address,
+          rate,
+          expected_term_months,
+          loan_amount_dollars
+        }
+        let investment = await this.$axios({
+          method: 'post',
+          url: '/api/investment',
+          data
+        })
+        this.$router.push({ path: `/funding` })
       }
-      let investment = await this.$axios({
-        method: 'post',
-        url: '/api/investment',
-        data: b
-      })
-      this.$router.push({ path: `/funding` })
+    },
+    validate() {
+      this.errors = []
+      if (!this.address) {
+        this.errors.push('Address is required')
+      }
+      if (this.loan_amount_dollars < MINIMUM_LOAN_AMOUNT) {
+        this.errors.push('Loan must be over $50,000')
+      }
+      if (this.rate < MINIMUM_LOAN_RATE) {
+        this.errors.push('Loan percentage must be over 5%')
+      }
+      console.log(this.errors)
     }
   }
 }
