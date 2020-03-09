@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="investment">
     <div>
       <span class="label">Address</span>
       <nuxt-link :to="'/investment/' + investment.id">
@@ -46,7 +46,6 @@ export default {
       )
       let total = 0
       funds.data.forEach(fund => (total += fund.amount))
-      console.log(total)
       this.funds = funds
       this.total = total
     }
@@ -55,6 +54,14 @@ export default {
 </script>
 
 <style scoped>
+.investment {
+  margin-bottom: 10px;
+}
+
+.investment:last-child {
+  margin-bottom: 0;
+}
+
 .label {
   font-weight: bold;
 }

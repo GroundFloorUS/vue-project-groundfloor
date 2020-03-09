@@ -19,7 +19,8 @@
                     label-for="amount">
         <b-form-input id="amount"
                       v-model="amount"
-                      name="amount" />
+                      name="amount"
+                      type="number" />
       </b-form-group>
 
       <b-button type="submit" variant="primary">Submit</b-button>
@@ -72,3 +73,9 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+form {
+  margin-bottom: 10px;
+}
+</style>

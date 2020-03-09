@@ -1,13 +1,9 @@
 <template>
   <b-container>
     <h2 class="title">FUNDED</h2>
-
-    <ul class="funded-list">
-      <li v-for="investment in funded" :key="investment.id">
-        <Investment :investment="investment" />
-      </li>
-    </ul>
-
+    <div class="investment-list">
+      <Investment v-for="investment in funded" :key="investment.id" :investment="investment" />
+    </div>
   </b-container>
 </template>
 
