@@ -36,6 +36,7 @@
                 :max="investment.loan_amount_dollars"
                 height="30px"
                 show-progress
+                class="mt-3"
               >
                 <b-progress-bar
                   :value="investment.funded_amt"

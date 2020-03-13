@@ -42,17 +42,22 @@
             <th scope="col">Invested Date</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody v-if="funds.length > 0">
           <template v-for="(fund, index) in funds">
             <tr
               :key="'table-row-' + index"
               class="text-center"
             >
-              <!-- <th scope="row">{{ index }}</th> -->
               <td>${{ fund.amount }}</td>
               <td>{{ formatDate(fund.created_on) }}</td>
             </tr>
           </template>
+        </tbody>
+        <tbody v-else>
+          <tr class="text-center">
+            <td>--</td>
+            <td>--</td>
+          </tr>
         </tbody>
       </table>
     </div>
@@ -70,20 +75,25 @@
           <b-form-input
             id="invest-amount-dollars"
             v-model="investmentAmount"
+            :state="investmentAmountState"
             type="number"
             name="invest-amount-dollars"
+            @input="validateInvestAmt()"
           />
-          <b-form-invalid-feedback id="invest-amount-dollars-error">
-            Enter an amount above $10
-          </b-form-invalid-feedback>
-          <!-- TODO: Disable if fully funded -->
           <b-button
+            :disabled="!investmentAmountState"
             type="submit"
             variant="primary"
             class="ml-3"
           >
             Invest
           </b-button>
+          <b-form-invalid-feedback id="invest-amount-dollars-error">
+            {{ investmentFeedback }}
+          </b-form-invalid-feedback>
+          <b-form-valid-feedback id="invest-amount-dollars-feedback">
+            {{ investmentFeedback }}
+          </b-form-valid-feedback>
         </b-input-group>
       </b-form-group>
     </b-form>
@@ -100,11 +110,19 @@
   </b-container>
 </template>
 <script>
+export const MIN_AMT_INVEST = 10
+import { formatter } from '~/static/utils'
 import axios from 'axios'
 export default {
   data() {
     return {
-      investmentAmount: 0
+      formatter,
+      MIN_AMT_INVEST,
+      totalFunds: 0,
+      investmentAmount: 0,
+      investmentAmountState: null,
+      investmentFeedback: '',
+      minAmountLabel: 'Enter an amount above '
     }
   },
   async asyncData({ $axios, params }) {
@@ -114,6 +132,9 @@ export default {
       investment: investment.data,
       funds: funds.data
     }
+  },
+  mounted() {
+    this.totalFunds = this.getTotalFunds(this.funds)
   },
   methods: {
     goBack() {
@@ -127,7 +148,6 @@ export default {
     },
     async submitInvestment(ev) {
       ev.preventDefault()
-      console.log(this.$route.params.id, this.investmentAmount)
       let funds = await axios({
         method: 'POST',
         url: '/api/funding',
@@ -136,12 +156,55 @@ export default {
           amount: this.investmentAmount
         }
       })
-      let updatedFunds = await axios.get(
-        `/api/investment/${this.$route.params.id}/funds`
-      )
-      if (updatedFunds.status === 200 && updatedFunds.data) {
-        this.funds = updatedFunds.data
+      if (funds.data.error) {
+        this.investmentFeedback = `
+        ${funds.data.message} - Max amount:
+        ${formatter.format(funds.data.maxAmt)}`
+        this.investmentAmountState = false
+      } else {
+        this.investmentAmount = 0
+        this.investmentAmountState = null
+        let updatedFunds = await axios.get(
+          `/api/investment/${this.$route.params.id}/funds`
+        )
+        if (updatedFunds.status === 200 && updatedFunds.data) {
+          this.funds = updatedFunds.data
+          this.totalFunds = this.getTotalFunds(this.funds)
+        }
       }
+    },
+    validateInvestAmt() {
+      let investmentAmount = parseFloat(this.investmentAmount || 0)
+      let maxInvestment = this.investment.loan_amount_dollars - this.totalFunds
+      // larger than minimum
+      if (investmentAmount < MIN_AMT_INVEST) {
+        this.investmentFeedback =
+          this.minAmountLabel + formatter.format(MIN_AMT_INVEST)
+        this.investmentAmountState = false
+        // investment greater than (loan - funds) -> Not Valid - Show the max they can invest
+      } else if (investmentAmount > maxInvestment) {
+        this.investmentAmountState = false
+        this.investmentFeedback = `${formatter.format(
+          maxInvestment
+        )} is the max investment you can make on this loan.`
+        // investment less than (loan - funds) -> Valid show what's left on the loan
+        // maybe should even snap their investment so that what is left on the loan isn't less than the minimum
+      } else if (investmentAmount < maxInvestment) {
+        this.investmentAmountState = true
+        this.investmentFeedback = `${formatter.format(
+          this.investment.loan_amount_dollars -
+            (this.totalFunds + investmentAmount)
+        )} left on this property!`
+        // investment less than (loan - funds) -> Valid, let them know it will fully fund
+      } else if (investmentAmount === maxInvestment) {
+        this.investmentAmountState = true
+        this.investmentFeedback = `This will fully fund this investment!`
+      } else {
+        this.investmentAmountState = true
+      }
+    },
+    getTotalFunds(funds) {
+      return funds.reduce((acc, currentValue) => acc + currentValue.amount, 0)
     }
   }
 }

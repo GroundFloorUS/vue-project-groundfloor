@@ -122,27 +122,64 @@ api.post('/investment', (req, res, next) => {
 api.post('/funding', (req, res, next) => {
   let { investment_id, amount } = req.body
   db.serialize(() => {
-    db.run(
-      `INSERT INTO funding
-        (investment_id, amount)
-       VALUES (?, ?);
-      `,
-      [investment_id, amount],
-      err => {
+    db.get(
+      `SELECT i.loan_amount_dollars, SUM(f.amount) as funded_amt
+      FROM investment i LEFT JOIN funding f
+      ON i.id = f.investment_id
+      WHERE i.id = ?
+      GROUP BY i.id`,
+      [investment_id],
+      (err, row) => {
         if (err) {
           next(err)
         }
-        db.get(
-          `SELECT id, investment_id, amount, created_on
-           FROM funding WHERE rowid = ?`,
-          [investment_id],
-          (err, row) => {
-            if (err) {
-              next(err)
+        let funded_amt = Number(row.funded_amt)
+        let loan_amount_dollars = Number(row.loan_amount_dollars)
+        let amountNumber = Number(amount)
+        if (loan_amount_dollars < ((funded_amt || 0) + amountNumber)) {
+          res.json({error: true, message: 'This will over fund the loan', maxAmt: row.loan_amount_dollars - (funded_amt || 0)})
+        } else {
+          db.run(
+            `INSERT INTO funding
+              (investment_id, amount)
+              VALUES (?, ?);
+            `,
+            [investment_id, amount],
+            err => {
+              if (err) {
+                next(err)
+              }
+              db.get(
+                `SELECT i.loan_amount_dollars, SUM(f.amount) as funded_amt
+                FROM investment i LEFT JOIN funding f
+                ON i.id = f.investment_id
+                WHERE i.id = ?
+                GROUP BY i.id`,
+                [investment_id],
+                (err, row) => {
+                  if (err) {
+                    next(err)
+                  }
+                  if (row.loan_amount_dollars <= row.funded_amt) {
+                    db.run(
+                      `UPDATE investment
+                        SET fully_funded = 1
+                        WHERE id = ?
+                      `,
+                      [investment_id],
+                      err => {
+                        if (err) {
+                          next(err)
+                        }
+                      }
+                    )
+                  }
+                  res.json({...row, error: false})
+                }
+              )
             }
-            res.json(row)
-          }
-        )
+          )
+        }
       }
     )
   })
