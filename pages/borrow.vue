@@ -129,7 +129,7 @@
       </b-form-group>
 
       <b-form-group
-        label="LoanAmount"
+        label="Loan Amount"
         label-for="loan_amount_dollars"
       >
         <b-input-group>
@@ -146,7 +146,7 @@
           />
 
           <b-form-invalid-feedback id="loan_amount_dollars_error">
-            Enter an amount above ${{ MIN_LOAN_AMT }}
+            Enter an amount above {{ formatter.format(MIN_LOAN_AMT) }}
           </b-form-invalid-feedback>
         </b-input-group>
       </b-form-group>
@@ -164,9 +164,11 @@
 export const MIN_RATE = 5
 export const MIN_LOAN_AMT = 50000
 import stateList from '~/static/us-states.json'
+import { formatter } from '~/static/utils'
 export default {
   data() {
     return {
+      formatter,
       MIN_RATE,
       MIN_LOAN_AMT,
       stateList,
