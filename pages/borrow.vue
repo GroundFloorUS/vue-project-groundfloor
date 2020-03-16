@@ -1,6 +1,11 @@
 <template>
   <b-container>
     <h2 class="title">BORROW</h2>
+    <b-alert :show="errors.length > 0" variant="danger">
+      <ul>
+        <li v-for="(error, index) in errors" :key="index">{{ error }}</li>
+      </ul>
+    </b-alert>
 
     <b-form @submit="onSubmit">
       <b-form-group label="Purpose"
@@ -45,7 +50,7 @@
         </b-input-group>
       </b-form-group>
 
-      <b-form-group label="LoanAmount"
+      <b-form-group label="Loan Amount"
                     label-for="loan_amount_dollars">
         <b-input-group>
           <b-input-group-prepend>
@@ -81,13 +86,28 @@ export default {
       address: '',
       rate: 10,
       expected_term_months: 12,
-      loan_amount_dollars: 100000
+      loan_amount_dollars: 100000,
+      errors: []
     }
   },
   methods: {
     async onSubmit(ev) {
       ev.preventDefault()
+      let errors = []
       let { address, rate, expected_term_months, loan_amount_dollars } = this
+      // validate address, rate, loan amount
+      address = (address || '').trim()
+      rate = parseFloat(rate)
+      loan_amount_dollars = parseFloat(loan_amount_dollars)
+      if (address == '') {
+        errors.push('Invalid Address')
+      }
+      if (rate < 5) {
+        errors.push('Rate must be greater than 5%')
+      }
+      if (loan_amount_dollars < 50000) {
+        errors.push('Loan amount must be greater than $50,000')
+      }
       let b = {
         purpose: this.purpose.value,
         address,
@@ -95,12 +115,17 @@ export default {
         expected_term_months,
         loan_amount_dollars
       }
-      let investment = await this.$axios({
-        method: 'post',
-        url: '/api/investment',
-        data: b
-      })
-      this.$router.push({ path: `/funding` })
+      if (errors.length > 0) {
+        this.errors = errors
+      } else {
+        this.errrors = []
+        let investment = await this.$axios({
+          method: 'post',
+          url: '/api/investment',
+          data: b
+        })
+        this.$router.push({ path: `/funding` })
+      }
     }
   }
 }

@@ -1,23 +1,17 @@
 <template>
   <b-container>
     <h2 class="title">FUNDED</h2>
-
-    <ul class="funded-list">
-      <li v-for="investment in funded" :key="investment.id">
-        <nuxt-link :to="'/investment/' + investment.id">
-          {{ investment.address }}
-        </nuxt-link>
-        <p>
-          {{ investment.loan_amount_dollars }}
-        </p>
-      </li>
-    </ul>
-
+    <InvestmentTable :investments="funded" />
   </b-container>
 </template>
 
 <script>
+import InvestmentTable from '../components/InvestmentTable.vue'
+
 export default {
+  components: {
+    InvestmentTable
+  },
   async asyncData({ $axios }) {
     let funded = await $axios.get('/api/funded')
     return {
