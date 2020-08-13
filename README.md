@@ -1,6 +1,6 @@
 # vue-project-groundfloor
 
-> Sample interview project for GROUNDFLOOR
+> GROUNDFLOOR Javascript/Vue Skill Assessment
 
 The goal behind this project is to demonstrate a working knowledge of
 modern javascript, ajax requests, reactivity, and testing.
