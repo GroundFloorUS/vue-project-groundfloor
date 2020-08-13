@@ -5,6 +5,12 @@
 The goal behind this project is to demonstrate a working knowledge of
 modern javascript, ajax requests, reactivity, and testing.
 
+> Instructions & Getting Started
+1. Clone the repo
+2. Read the READ.me
+3. Submit a PR for your work
+4. Notify us and we will take a look.
+
 ## Build Setup
 
 You'll need node, yarn (or npm) and  [node-sqlite3](https://github.com/mapbox/node-sqlite3).
