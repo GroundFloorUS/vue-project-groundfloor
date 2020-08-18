@@ -1,5 +1,14 @@
+<style scoped>
+.error {
+  color: red;
+}
+.form-group {
+  height: 104px;
+}
+</style>
 <template>
   <b-container>
+
     <h2 class="title">BORROW</h2>
 
     <b-form @submit="onSubmit">
@@ -16,20 +25,28 @@
         <b-form-input id="address"
                       v-model="address"
                       type="text"
-                      name="address" />
+                      name="address"
+                      @change="onChange" />
+        <p v-if="errors.address" class="error">
+          {{ errors.address }}
+        </p>
       </b-form-group>
-      
+
       <b-form-group label="Rate"
                     label-for="rate">
         <b-input-group>
           <b-form-input id="rate"
                         v-model="rate"
                         type="number"
-                        name="rate"/>
+                        name="rate"
+                        @change="onChange"/>
           <b-input-group-append>
             <span class="input-group-text">%</span>
           </b-input-group-append>
         </b-input-group>
+        <p v-if="errors.rate" class="error">
+          {{ errors.rate }}
+        </p>
       </b-form-group>
 
       <b-form-group label="Expected Term"
@@ -38,11 +55,15 @@
           <b-form-input id="expected_term_months"
                         v-model="expected_term_months"
                         type="number"
-                        name="expected_term_months"/>
+                        name="expected_term_months"
+                        @change="onChange"/>
           <b-input-group-append>
             <span class="input-group-text">months</span>
           </b-input-group-append>
         </b-input-group>
+        <p v-if="errors.expected_term_months" class="error">
+          {{ errors.expected_term_months }}
+        </p>
       </b-form-group>
 
       <b-form-group label="LoanAmount"
@@ -54,21 +75,32 @@
           <b-form-input id="loan_amount_dollars"
                         v-model="loan_amount_dollars"
                         type="number"
-                        name="loan_amount_dollars"/>
+                        name="loan_amount_dollars"
+                        @change="onChange"/>
         </b-input-group>
+        <p v-if="errors.loan_amount_dollars" class="error">
+          {{ errors.loan_amount_dollars }}
+        </p>
       </b-form-group>
 
       <b-button type="submit" variant="primary">Submit</b-button>
 
     </b-form>
-      
+
   </b-container>
 </template>
 
 <script>
+const requiredLabelMap = {
+  address: 'Address',
+  rate: 'Rate',
+  expected_term_months: 'Term',
+  loan_amount_dollars: 'Amount'
+}
 export default {
   data() {
     return {
+      errors: {},
       purpose: {
         value: 'Purchase',
         options: [
@@ -85,6 +117,25 @@ export default {
     }
   },
   methods: {
+    validate() {
+      Object.entries(requiredLabelMap).forEach(([key, val]) => {
+        this.$set(this.errors, key, !this[key] ? `${val} required` : '')
+      })
+      if (this.rate && this.rate <= 5) {
+        this.$set(this.errors, 'rate', 'Rate must be above 5%')
+      }
+      if (this.loan_amount_dollars && this.loan_amount_dollars <= 50000) {
+        this.$set(
+          this.errors,
+          'loan_amount_dollars',
+          'Amount must be over $50,000'
+        )
+      }
+      return Object.values(this.errors).filter(error => !!error).length === 0
+    },
+    onChange(ev) {
+      this.validate()
+    },
     async onSubmit(ev) {
       ev.preventDefault()
       let { address, rate, expected_term_months, loan_amount_dollars } = this
@@ -94,6 +145,10 @@ export default {
         rate,
         expected_term_months,
         loan_amount_dollars
+      }
+
+      if (!this.validate()) {
+        return
       }
       let investment = await this.$axios({
         method: 'post',
