@@ -79,4 +79,5 @@ After you're up and running
 
 * Replace bootstrap with bulma
 * No JS standard style. Ew.
-* 
+* Typescript
+

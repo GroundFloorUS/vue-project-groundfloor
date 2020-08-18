@@ -1,6 +1,11 @@
 <template>
   <b-container>
-    <h2 class="title">FUNDING</h2>
+    <b-jumbotron
+      header="Funding"
+      lead="Entrepreneurs helping entrepreneurs"
+      bg-variant="info"
+      text-variant="light"
+    />
 
     <ul class="funding-list">
       <li v-for="investment in funding" :key="investment.id">
@@ -19,11 +24,22 @@
 
 <script>
 export default {
+  // The way this was written before would not have properly handled an api error
   async asyncData({ $axios }) {
-    let funding = await $axios.get('/api/funding')
-    return {
-      funding: funding.data
-    }
+    return new Promise((resolve,reject) => {
+      $axios.get('/api/funding')
+      .then((response) => {
+        if (response && response.data) {
+          resolve({
+            funding: response.data
+          })
+        } else {
+          console.error('Invalid response!', response);
+          reject(new Error('Invalid response'));
+        }
+      })
+      .catch(reject);
+    });
   }
 }
 </script>
