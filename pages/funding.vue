@@ -9,12 +9,12 @@
 
     <div class="investments">
       <div
-        v-for="(investment, investmentIndex) in funding"
+        v-for="investment in funding"
         :key="investment.id"
         class="investment"
       >
         <murray-media
-          :seed="investmentIndex"
+          :seed="investment.id"
           class="investment__media"
         />
         <div class="investment__body">

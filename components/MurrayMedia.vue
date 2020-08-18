@@ -31,7 +31,7 @@
     computed: {
       backgroundStyle() {
         return {
-          backgroundImage: `url('https://www.fillmurray.com/500/50${this.seed}')`,
+          backgroundImage: `url('https://www.fillmurray.com/500/${500 + this.seed}')`,
         }
       }
     }
