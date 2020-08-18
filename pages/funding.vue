@@ -1,20 +1,37 @@
+<style scope>
+.funding-list {
+  list-style: none;
+  border: 1px solid;
+}
+.heading {
+  border-bottom: 1px solid;
+}
+</style>
 <template>
-  <b-container>
+  <div>
     <h2 class="title">FUNDING</h2>
 
-    <ul class="funding-list">
-      <li v-for="investment in funding" :key="investment.id">
-        <p>
-          <nuxt-link :to="'/investment/' + investment.id">
-            {{ investment.address }}
-          </nuxt-link>
-        </p>
-        <p>
-          {{ investment.loan_amount_dollars }}
-        </p>
-      </li>
-    </ul>
-  </b-container>
+    <b-container class="funding-list">
+      <b-row class="heading">
+        <b-col>Address</b-col>
+        <b-col>Purpose</b-col>
+        <b-col>Amount</b-col>
+        <b-col>Rate</b-col>
+        <b-col>Term</b-col>
+        <b-col>&nbsp;&nbsp;></b-col>
+      </b-row>
+      <b-row v-for="investment in funding" :key="investment.id">
+        <b-col>{{ investment.address }}</b-col>
+        <b-col>{{ investment.purpose }}</b-col>
+        <b-col>{{ investment.loan_amount_dollars }}</b-col>
+        <b-col>{{ investment.rate }}</b-col>
+        <b-col>{{ investment.expected_term_months }}</b-col>
+        <b-col>
+          <nuxt-link :to="'/investment/' + investment.id">Invest</nuxt-link>
+        </b-col>
+      </b-row>
+    </b-container>
+  </div>
 </template>
 
 <script>
