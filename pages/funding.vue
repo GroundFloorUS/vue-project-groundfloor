@@ -1,17 +1,11 @@
 <style scope>
-.funding-list {
-  list-style: none;
-  border: 1px solid;
-}
-.heading {
-  border-bottom: 1px solid;
-}
+@import './list.scss';
 </style>
 <template>
   <div>
     <h2 class="title">FUNDING</h2>
 
-    <b-container class="funding-list">
+    <b-container class="list">
       <b-row class="heading">
         <b-col>Address</b-col>
         <b-col>Purpose</b-col>
@@ -23,7 +17,7 @@
       <b-row v-for="investment in funding" :key="investment.id">
         <b-col>{{ investment.address }}</b-col>
         <b-col>{{ investment.purpose }}</b-col>
-        <b-col>{{ investment.loan_amount_dollars }}</b-col>
+        <b-col>${{ investment.loan_amount_dollars }}</b-col>
         <b-col>{{ investment.rate }}</b-col>
         <b-col>{{ investment.expected_term_months }}</b-col>
         <b-col>
