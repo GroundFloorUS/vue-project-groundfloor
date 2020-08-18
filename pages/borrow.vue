@@ -1,6 +1,11 @@
 <template>
   <b-container>
-    <h2 class="title">BORROW</h2>
+    <b-jumbotron
+      header="Borrow"
+      lead="Begin your loan journey here"
+      bg-variant="info"
+      text-variant="light"
+    />
 
     <b-form
       novalidate
@@ -89,7 +94,7 @@
         </b-input-group>
       </b-form-group>
 
-      <b-button type="submit" variant="primary">Submit</b-button>
+      <b-button type="submit" variant="success">Let's Do This!</b-button>
 
     </b-form>
 
