@@ -36,7 +36,12 @@
 </template>
 
 <style>
-img.gf-header-brand {
+.gf-navbar .navbar-brand {
+  margin-right: 0;
+  margin-bottom:5px;
+}
+
+.gf-header-brand {
   height: 2em;
 }
 .invest-dropdown {

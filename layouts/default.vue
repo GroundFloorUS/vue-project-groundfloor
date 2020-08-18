@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="layout">
     <GFHeader />
     <main>
       <nuxt/>
@@ -69,4 +69,7 @@ html {
 main {
   margin-top: 2em;
 }
+  .layout {
+    padding-bottom:10rem;
+  }
 </style>
