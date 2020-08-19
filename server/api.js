@@ -5,7 +5,7 @@ let api = express.Router()
 
 api.get('/funding', (req, res, next) => {
   db.all(
-    `SELECT * FROM investment 
+    `SELECT * FROM investment
        WHERE fully_funded = 0
        ORDER BY created_on DESC
     `,
@@ -20,7 +20,7 @@ api.get('/funding', (req, res, next) => {
 
 api.get('/funded', (req, res, next) => {
   db.all(
-    `SELECT * FROM investment 
+    `SELECT * FROM investment
        WHERE fully_funded = 1
        ORDER BY created_on DESC
     `,
@@ -90,7 +90,7 @@ api.post('/investment', (req, res, next) => {
 
   db.serialize(() => {
     db.run(
-      `INSERT INTO investment 
+      `INSERT INTO investment
         (purpose, address, rate, expected_term_months, loan_amount_dollars)
        VALUES (?, ?, ?, ?, ?);
       `,
@@ -117,33 +117,61 @@ api.post('/investment', (req, res, next) => {
 })
 
 api.post('/funding', (req, res, next) => {
-  let { investment_id, amount } = req.body
+  let { investment_id, amount, fullyFunded } = req.body
 
-  db.serialize(() => {
-    db.run(
-      `INSERT INTO funding
-        (investment_id, amount)
-       VALUES (?, ?);
-      `,
-      [investment_id, amount],
-      err => {
-        if (err) {
-          next(err)
-        }
-        db.get(
-          `SELECT id, investment_id, amount, created_on
-           FROM funding WHERE rowid = ?`,
-          [this.lastID],
-          (err, row) => {
+  db.get(
+    `SELECT fully_funded, loan_amount_dollars FROM investment
+       WHERE id = ?
+       ORDER BY created_on DESC
+    `,
+    [investment_id],
+    (err, row) => {
+      if (err) {
+        next(err)
+      }
+      if (row.fully_funded === 1) {
+        res.status(400)
+        res.json({ isAlreadyFullyFunded: 1, data: row })
+      }
+      db.serialize(() => {
+        db.run(
+          `INSERT INTO funding
+            (investment_id, amount)
+           VALUES (?, ?);
+          `,
+          [investment_id, amount],
+          err => {
             if (err) {
               next(err)
             }
-            res.json(row)
+            db.run(
+              `UPDATE investment
+              SET fully_funded = ?
+              WHERE id = ?
+              `,
+              [fullyFunded, investment_id],
+              err => {
+                if (err) {
+                  next(err)
+                }
+                db.get(
+                  `SELECT id, investment_id, amount, created_on
+                   FROM funding WHERE rowid = ?`,
+                  [this.lastID],
+                  (err, row) => {
+                    if (err) {
+                      next(err)
+                    }
+                    res.json(row)
+                  }
+                )
+              }
+            )
           }
         )
-      }
-    )
-  })
+      })
+    }
+  )
 })
 
 module.exports = api

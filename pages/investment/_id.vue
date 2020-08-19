@@ -10,8 +10,13 @@
     <h1 class="title">LOAN</h1>
     <p>Address: {{ investment.address }}</p>
     <p>Purpose: {{ investment.purpose }}</p>
-    <section class="investment_form">
+    <section v-if="fullyFunded">
+      <h4>This loan is fully funded</h4>
+      <b-button type="button" vairant="success" @click="goBack">Go back to find other loans</b-button>
+    </section>
+    <section v-if="!fullyFunded" class="investment_form">
       <h3 class="subtitle">Invest</h3>
+      <p>${{ maxAmountAllowed }} will fully fund the loan</p>
       <b-form @submit="onSubmit">
         <b-form-group label="Amount" label-for="amount">
           <b-input-group>
@@ -21,6 +26,7 @@
             <b-form-input
               id="amount"
               v-model="amount"
+              :max="maxAmountAllowed"
               type="number"
               name="amount"
               @change="onChange"
@@ -41,7 +47,7 @@
           <b-col>Address</b-col>
           <b-col>Created</b-col>
         </b-row>
-        <b-row v-for="fund in funds.reverse()" :key="fund.id">
+        <b-row v-for="fund in funds" :key="fund.id">
           <b-col>${{ fund.amount }}</b-col>
           <b-col>{{ fund.created_on }}</b-col>
         </b-row>
@@ -55,20 +61,36 @@ const requiredLabelMap = {
 }
 export default {
   async asyncData({ $axios, params }) {
-    let investment = await $axios.get(`/api/investment/${params.id}`)
-    let funds = await $axios.get(`/api/investment/${params.id}/funds`)
+    const investment = await $axios.get(`/api/investment/${params.id}`)
+    const funds = await $axios.get(`/api/investment/${params.id}/funds`)
+    const totalAmountFunded = funds.data.reduce(
+      (sum, curr) => sum + curr.amount,
+      0
+    )
+    const maxAmountAllowed =
+      investment.data.loan_amount_dollars - totalAmountFunded
     return {
+      totalAmountFunded,
+      maxAmountAllowed,
+      fullyFunded: totalAmountFunded >= maxAmountAllowed,
       amount: 0,
       errors: {},
       investment_id: params.id,
       investment: investment.data,
-      funds: funds.data
+      funds: funds.data.reverse()
     }
   },
   methods: {
     validate() {
+      console.log(this.maxAmountAllowed)
       if (!this.amount || this.amount <= 0) {
         this.$set(this.errors, 'amount', 'Amount must be over $0')
+      } else if (!this.amount || this.amount > this.maxAmountAllowed) {
+        this.$set(
+          this.errors,
+          'amount',
+          `Amount must be under $${this.maxAmountAllowed}`
+        )
       } else {
         this.$set(this.errors, 'amount', '')
       }
@@ -79,8 +101,9 @@ export default {
     },
     async onSubmit(ev) {
       ev.preventDefault()
-      let { investment_id, amount } = this
-      let b = {
+      const { investment_id, amount, maxAmountAllowed } = this
+      const b = {
+        fullyFunded: amount < maxAmountAllowed ? 0 : 1,
         amount,
         investment_id
       }
@@ -89,15 +112,17 @@ export default {
         return
       }
 
-      let investment = await this.$axios({
+      await this.$axios({
         method: 'post',
         url: '/api/funding',
         data: b
       })
-      let funds = await this.$axios.get(
+      const funds = await this.$axios.get(
         `/api/investment/${investment_id}/funds`
       )
-      this.funds = funds.data
+      this.totalAmountFunded = this.totalAmountFunded + amount
+      this.maxAmountAllowed = this.maxAmountAllowed - amount
+      this.funds = funds.data.reverse()
     },
     goBack() {
       this.$router.back()
