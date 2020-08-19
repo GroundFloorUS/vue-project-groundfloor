@@ -74,10 +74,3 @@ After you're up and running
 * Change the /api/fund endpoint so that if it fully funds a loan, it sets the db record's investment.fully_funded to 1. Then it will appear on the FUNDED screen.
 * Show how much of a loan has been funded. Two places for this: the /investment/:id screen and the /funding screen.
 * Change the fund form on /investment/:id so that it shows what will be left after that much money once that fund is created. You may even add a message saying something like "This will fully fund the loan."
-
-#### Things I would change
-
-* Replace bootstrap with bulma
-* No JS standard style. Ew.
-* Typescript
-

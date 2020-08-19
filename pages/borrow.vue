@@ -8,6 +8,7 @@
     />
 
     <b-form
+      class="borrow__form"
       novalidate
       @submit.prevent="onSubmit"
     >
@@ -100,5 +101,14 @@
 
   </b-container>
 </template>
+
+<style lang="scss">
+  .borrow {
+    &__form {
+      max-width:500px;
+      margin:0 auto;
+    }
+  }
+</style>
 
 <script src="./borrow.js"/>
