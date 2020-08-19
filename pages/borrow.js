@@ -53,8 +53,7 @@ export default {
   },
   methods: {
     // TODO : Move to Vuex, implement better api error handling
-    onSubmit(event) {
-      event.preventDefault()
+    onSubmit() {
       this.isSubmitted = true
 
       return new Promise((resolve, reject) => {

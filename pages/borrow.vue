@@ -9,7 +9,7 @@
 
     <b-form
       novalidate
-      @submit="onSubmit"
+      @submit.prevent="onSubmit"
     >
       <b-form-group
         :validated="isSubmitted"

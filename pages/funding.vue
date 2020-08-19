@@ -2,6 +2,7 @@
   <b-container>
     <b-jumbotron
       header="Funding"
+      header-tag="h1"
       lead="Entrepreneurs helping entrepreneurs. Or Bill Murray."
       bg-variant="info"
       text-variant="light"
