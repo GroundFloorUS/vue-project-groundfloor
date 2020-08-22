@@ -2,24 +2,23 @@
   <b-container>
     <b-jumbotron>
       <h1 class="title">
-        <logo/>
+        <logo />
       </h1>
-      <h3 class="subtitle">
-        Sample interview project for GROUNDFLOOR
-      </h3>
+      <h3 class="subtitle">Sample interview project for GROUNDFLOOR</h3>
 
       <b-container class="invest-action-buttons">
         <b-row>
           <b-col>
-            <b-button size="lg" variant="success" @click="goFunding">
-              FUND A LOAN
-            </b-button>
-            <b-button size="lg" variant="primary" @click="goBorrow">
-              BORROW
-            </b-button>
+            <b-button
+              data-cy="fund-loan-button"
+              size="lg"
+              variant="success"
+              @click="goFunding"
+            >FUND A LOAN</b-button>
+            <b-button data-cy="borrow-button" size="lg" variant="primary" @click="goBorrow">BORROW</b-button>
           </b-col>
         </b-row>
-      </b-container>        
+      </b-container>
     </b-jumbotron>
   </b-container>
 </template>

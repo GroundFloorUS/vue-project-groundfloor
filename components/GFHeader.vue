@@ -12,8 +12,8 @@
 
       <b-navbar-nav class="ml-auto">
 
-        <b-nav-item-dropdown text="INVEST" right class="invest-dropdown">
-          <nuxt-link class="dropdown-item" role="menuitem" to="/funding">
+        <b-nav-item-dropdown data-cy="invest-menu" text="INVEST" right class="invest-dropdown">
+          <nuxt-link data-cy="funding-page-link" class="dropdown-item" role="menuitem" to="/funding">
             FUNDING
           </nuxt-link>
 
