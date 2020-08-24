@@ -79,6 +79,34 @@ api.get('/fund/:id', (req, res, next) => {
   )
 })
 
+api.post('/fund', (req, res, next) => {
+  let { investment_id, amount, created_on } = req.body
+  db.serialize(() => {
+    db.run(
+      `INSERT INTO funding 
+      (investment_id, amount, created_on)
+     VALUES (?, ?, ?);
+    `,
+      [investment_id, amount, created_on],
+      err => {
+        if (err) {
+          next(err)
+        }
+        db.get(
+          `SELECT id, investment_id, amount, created_on FROM funding WHERE rowid =?`,
+          [this.lastID],
+          (err, row) => {
+            if (err) {
+              next(err)
+            }
+            res.json(row)
+          }
+        )
+      }
+    )
+  })
+})
+
 api.post('/investment', (req, res, next) => {
   let {
     purpose,
