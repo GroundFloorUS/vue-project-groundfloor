@@ -16,13 +16,13 @@
       </b-form-group>
 
       <b-form-group label="Address" label-for="address">
-        <b-form-input id="address" v-model="address" type="text" name="address" @change="onChange" />
+        <b-form-input id="address" v-model="address" type="text" name="address" />
         <p v-if="errors.address" class="error">{{ errors.address }}</p>
       </b-form-group>
 
       <b-form-group label="Rate" label-for="rate">
         <b-input-group>
-          <b-form-input id="rate" v-model="rate" type="number" name="rate" @change="onChange" />
+          <b-form-input id="rate" v-model="rate" type="number" name="rate" />
           <b-input-group-append>
             <span class="input-group-text">%</span>
           </b-input-group-append>
@@ -37,7 +37,6 @@
             v-model="expected_term_months"
             type="number"
             name="expected_term_months"
-            @change="onChange"
           />
           <b-input-group-append>
             <span class="input-group-text">months</span>
@@ -56,13 +55,12 @@
             v-model="loan_amount_dollars"
             type="number"
             name="loan_amount_dollars"
-            @change="onChange"
           />
         </b-input-group>
         <p v-if="errors.loan_amount_dollars" class="error">{{ errors.loan_amount_dollars }}</p>
       </b-form-group>
 
-      <b-button :disabled="!validate()" type="submit" variant="primary">Submit</b-button>
+      <b-button :disabled="hasErrors" type="submit" variant="primary">Submit</b-button>
     </b-form>
   </b-container>
 </template>
@@ -77,7 +75,7 @@ const requiredLabelMap = {
 export default {
   data() {
     return {
-      errors: {},
+      // errors: {},
       purpose: {
         value: 'Purchase',
         options: [
@@ -93,26 +91,25 @@ export default {
       loan_amount_dollars: 100000
     }
   },
-  methods: {
-    validate() {
+  computed: {
+    hasErrors() {
+      return Object.values(this.errors).filter(error => !!error).length > 0
+    },
+    errors() {
+      const errors = {}
       Object.entries(requiredLabelMap).forEach(([key, val]) => {
-        this.$set(this.errors, key, !this[key] ? `${val} required` : '')
+        errors[key] = !this[key] ? `${val} required` : ''
       })
       if (this.rate && this.rate <= 5) {
-        this.$set(this.errors, 'rate', 'Rate must be above 5%')
+        errors.rate = 'Rate must be above 5%'
       }
       if (this.loan_amount_dollars && this.loan_amount_dollars <= 50000) {
-        this.$set(
-          this.errors,
-          'loan_amount_dollars',
-          'Amount must be over $50,000'
-        )
+        errors.loan_amount_dollars = 'Amount must be over $50,000'
       }
-      return Object.values(this.errors).filter(error => !!error).length === 0
-    },
-    onChange(ev) {
-      this.validate()
-    },
+      return errors
+    }
+  },
+  methods: {
     async onSubmit(ev) {
       ev.preventDefault()
       let { address, rate, expected_term_months, loan_amount_dollars } = this
@@ -124,9 +121,10 @@ export default {
         loan_amount_dollars
       }
 
-      if (!this.validate()) {
+      if (this.hasErrors) {
         return
       }
+
       let investment = await this.$axios({
         method: 'post',
         url: '/api/investment',
