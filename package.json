@@ -25,7 +25,8 @@
     "nuxt": "^2.0.0",
     "serialize-javascript": "2.1.1",
     "sqlite3": "^4.0.6",
-    "uuid": "^3.3.2"
+    "uuid": "^3.3.2",
+    "vee-validate": "^3.3.9"
   },
   "devDependencies": {
     "ava": "^1.1.0",
