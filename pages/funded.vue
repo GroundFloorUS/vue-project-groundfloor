@@ -8,7 +8,7 @@
           {{ investment.address }}
         </nuxt-link>
         <p>
-          {{ investment.loan_amount_dollars }}
+          {{ investment.loan_amount_dollars | currency }}
         </p>
       </li>
     </ul>
@@ -17,9 +17,17 @@
 </template>
 
 <script>
+import { currencyFilter } from '../shared/number-filters'
+
 export default {
+  filters: {
+    currency: currencyFilter
+  },
   async asyncData({ $axios }) {
-    let funded = await $axios.get('/api/funded')
+    const funded = await $axios.get('/api/funded').catch(error => {
+      console.log(error)
+    })
+
     return {
       funded: funded.data
     }

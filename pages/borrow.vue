@@ -1,7 +1,12 @@
 <template>
   <b-container>
     <h2 class="title">BORROW</h2>
-
+    <p v-if="errors.length">
+      <span class="form-error-msg">Please correct the following error(s):</span>
+      <ul>
+        <li v-for="(error, index) in errors" :key="index" class="form-error" >{{ error }}</li>
+      </ul>
+    </p>
     <b-form @submit="onSubmit">
       <b-form-group label="Purpose"
                     label-for="purpose">
@@ -18,7 +23,7 @@
                       type="text"
                       name="address" />
       </b-form-group>
-      
+
       <b-form-group label="Rate"
                     label-for="rate">
         <b-input-group>
@@ -61,12 +66,13 @@
       <b-button type="submit" variant="primary">Submit</b-button>
 
     </b-form>
-      
+
   </b-container>
 </template>
 
 <script>
 export default {
+  filters: {},
   data() {
     return {
       purpose: {
@@ -81,27 +87,69 @@ export default {
       address: '',
       rate: 10,
       expected_term_months: 12,
-      loan_amount_dollars: 100000
+      loan_amount_dollars: 100000,
+      errors: []
     }
   },
   methods: {
     async onSubmit(ev) {
       ev.preventDefault()
-      let { address, rate, expected_term_months, loan_amount_dollars } = this
-      let b = {
+
+      const { address, rate, expected_term_months, loan_amount_dollars } = this
+      const borrowData = {
         purpose: this.purpose.value,
         address,
         rate,
         expected_term_months,
         loan_amount_dollars
       }
-      let investment = await this.$axios({
-        method: 'post',
-        url: '/api/investment',
-        data: b
-      })
-      this.$router.push({ path: `/funding` })
+
+      const isValid = this.validateForm()
+
+      if (isValid) {
+        const investment = await this.$axios({
+          method: 'post',
+          url: '/api/investment',
+          data: borrowData
+        }).catch(error => {
+          console.log(error)
+        })
+
+        this.$router.push({ path: `/funding` })
+      }
+    },
+    validateForm() {
+      this.errors.length = 0
+
+      if (!this.address) {
+        this.errors.push('Address is empty')
+      } else if (this.address.length <= 3) {
+        this.errors.push('Address is too short')
+      }
+
+      if (this.rate <= 5) {
+        this.errors.push('Rate needs to be more than 5%')
+      }
+
+      if (this.loan_amount_dollars <= 50000) {
+        this.errors.push('Loan amount needs to be greater than $50,000')
+      }
+
+      return this.errors.length ? false : true
     }
   }
 }
 </script>
+
+<style scoped>
+.form-error-msg {
+  font-weight: bold;
+  font-size: 18px;
+  color: red;
+}
+
+.form-error {
+  font-size: 14px;
+  color: red;
+}
+</style>

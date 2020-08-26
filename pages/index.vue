@@ -19,7 +19,7 @@
             </b-button>
           </b-col>
         </b-row>
-      </b-container>        
+      </b-container>
     </b-jumbotron>
   </b-container>
 </template>
@@ -28,20 +28,27 @@
 import Logo from '~/components/Logo.vue'
 
 export default {
-  async asyncData({ $axios }) {
-    let funding = await $axios.get('api/funding')
-    let funded = await $axios.get('api/funded')
-    return {
-      funding: funding.data,
-      funded: funded.data
-    }
-  },
   components: {
     Logo
   },
+  filters: {},
   data() {
     return {
       key: 'value'
+    }
+  },
+  async asyncData({ $axios }) {
+    const funding = await $axios.get('api/funding').catch(error => {
+      console.log(error)
+    })
+
+    const funded = await $axios.get('api/funded').catch(error => {
+      console.log(error)
+    })
+
+    return {
+      funding: funding.data,
+      funded: funded.data
     }
   },
   methods: {
@@ -58,5 +65,9 @@ export default {
 <style>
 .invest-action-buttons {
   margin-top: 4em;
+}
+
+li {
+  list-style-type: square;
 }
 </style>
