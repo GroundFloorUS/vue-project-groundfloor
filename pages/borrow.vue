@@ -2,66 +2,122 @@
   <b-container>
     <h2 class="title">BORROW</h2>
 
-    <b-form @submit="onSubmit">
-      <b-form-group label="Purpose"
-                    label-for="purpose">
-        <b-form-select id="purpose"
-                       v-model="purpose.value"
-                       :options="purpose.options"
-                       name="purpose" />
-      </b-form-group>
+    <validation-observer v-slot="{ handleSubmit }" ref="observer">
 
-      <b-form-group label="Address"
-                    label-for="address">
-        <b-form-input id="address"
-                      v-model="address"
-                      type="text"
-                      name="address" />
-      </b-form-group>
-      
-      <b-form-group label="Rate"
-                    label-for="rate">
-        <b-input-group>
-          <b-form-input id="rate"
-                        v-model="rate"
-                        type="number"
-                        name="rate"/>
-          <b-input-group-append>
-            <span class="input-group-text">%</span>
-          </b-input-group-append>
-        </b-input-group>
-      </b-form-group>
 
-      <b-form-group label="Expected Term"
-                    label-for="expected_term_months">
-        <b-input-group>
-          <b-form-input id="expected_term_months"
-                        v-model="expected_term_months"
-                        type="number"
-                        name="expected_term_months"/>
-          <b-input-group-append>
-            <span class="input-group-text">months</span>
-          </b-input-group-append>
-        </b-input-group>
-      </b-form-group>
+      <b-form @submit="onSubmit">
 
-      <b-form-group label="LoanAmount"
-                    label-for="loan_amount_dollars">
-        <b-input-group>
-          <b-input-group-prepend>
-            <span class="input-group-text">$</span>
-          </b-input-group-prepend>
-          <b-form-input id="loan_amount_dollars"
-                        v-model="loan_amount_dollars"
-                        type="number"
-                        name="loan_amount_dollars"/>
-        </b-input-group>
-      </b-form-group>
+        <!-- purpose -->
+        <b-form-group
+          label="Purpose"
+          label-for="purpose"
+        >
+          <b-form-select
+            id="purpose"
+            v-model="purpose.value"
+            :options="purpose.options"
+            name="purpose"
+          />
+        </b-form-group>
 
-      <b-button type="submit" variant="primary">Submit</b-button>
+        <!-- address -->
+        <validation-provider
+          v-slot="validationContext"
+          :rules="{ required: true, regex: /^\s*\S+(?:\s+\S+){2}/ }"
+          name="address"
+        >
+          <b-form-group
+            label="Address"
+            label-for="address"
+          >
+            <b-form-input
+              id="address"
+              v-model="address"
+              :state="getValidationState(validationContext)"
+              type="text"
+              name="address"
+              aria-describedby="address-live-feedback"
+            />
+            <b-form-invalid-feedback id="address-live-feedback">{{ validationContext.errors[0] }}</b-form-invalid-feedback>
+          </b-form-group>
+        </validation-provider>
 
-    </b-form>
-      
+        <!-- rate -->
+        <validation-provider
+          v-slot="validationContext"
+          :rules="{min_value:5}"
+          name="rate"
+        >
+          <b-form-group
+            label="Rate"
+            label-for="rate"
+          >
+            <b-input-group>
+              <b-form-input
+                id="rate"
+                v-model="rate"
+                :state="getValidationState(validationContext)"
+                type="number"
+                name="rate"
+                aria-describedby="rate-live-feedback"
+              />
+              <b-input-group-append>
+                <span class="input-group-text">%</span>
+              </b-input-group-append>
+              <b-form-invalid-feedback id="rate-live-feedback">{{ validationContext.errors[0] }}</b-form-invalid-feedback>
+            </b-input-group>
+          </b-form-group>
+        </validation-provider>
+
+        <!-- term -->
+        <b-form-group
+          label="Expected Term"
+          label-for="expected_term_months"
+        >
+          <b-input-group>
+            <b-form-input
+              id="expected_term_months"
+              v-model="expected_term_months"
+              type="number"
+              name="expected_term_months"
+            />
+            <b-input-group-append>
+              <span class="input-group-text">months</span>
+            </b-input-group-append>
+          </b-input-group>
+        </b-form-group>
+
+        <!-- amount -->
+        <validation-provider
+          v-slot="validationContext"
+          :rules="{min_value:50000}"
+          name="loan amount"
+        >
+          <b-form-group
+            label="LoanAmount"
+            label-for="loan_amount_dollars"
+          >
+            <b-input-group>
+              <b-input-group-prepend>
+                <span class="input-group-text">$</span>
+              </b-input-group-prepend>
+              <b-form-input
+                id="loan_amount_dollars"
+                v-model="loan_amount_dollars"
+                :state="getValidationState(validationContext)"
+                type="number"
+                name="loan_amount_dollars"
+                aria-describedby="loanAmount-live-feedback"
+              />
+              <b-form-invalid-feedback id="loanAmount-live-feedback">{{ validationContext.errors[0] }}</b-form-invalid-feedback>
+            </b-input-group>
+          </b-form-group>
+        </validation-provider>
+
+        <b-button type="submit" variant="primary">Submit</b-button>
+
+      </b-form>
+    </validation-observer>
   </b-container>
 </template>
 
