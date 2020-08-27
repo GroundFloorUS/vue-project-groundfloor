@@ -132,11 +132,8 @@ api.post('/investment', (req, res, next) => {
           next(err)
         }
         db.get(
-          `SELECT id, purpose, address, rate, expected_term_months,
-            loan_amount_dollars, fully_funded, created_on
-           FROM investment
-           WHERE rowid = ?`,
-          [this.lastID],
+          `SELECT MAX(id) as id FROM investment`,
+          [],
           (err, row) => {
             if (err) {
               next(err)
@@ -157,7 +154,7 @@ api.post('/funding', (req, res, next) => {
         (investment_id, amount)
        VALUES (?, ?);
       `,
-      [investment_id, amount],
+      [Number(investment_id), Number(amount)],
       err => {
         if (err) {
           next(err)

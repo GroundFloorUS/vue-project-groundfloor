@@ -12,7 +12,7 @@
       </div>
       <div v-for="investments in funding" :key="investments.id" class="tr" >
         <div class="td left">
-          <nuxt-link :to="'/investment/funding/' + investments.id">
+          <nuxt-link :to="'/investment/' + investments.id">
             {{ investments.address }}
           </nuxt-link>
         </div>

@@ -115,6 +115,19 @@ export default {
           console.log(error)
         })
 
+        const initialFundingData = {
+          investment_id: investment.data.id,
+          amount: 0
+        }
+
+        await this.$axios({
+          method: 'post',
+          url: '/api/funding',
+          data: initialFundingData
+        }).catch(error => {
+          console.log(error)
+        })
+
         this.$router.push({ path: `/funding` })
       }
     },
