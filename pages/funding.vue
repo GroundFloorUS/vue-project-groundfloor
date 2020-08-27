@@ -55,9 +55,7 @@ export default {
      * TODO: This should be replaced by a more robust system like moment.js
      */
     getTimeSince(date) {
-      console.log(date)
       const d = new Date(date)
-      console.log(d)
       let seconds = Math.floor((new Date() - d) / 1000)
       let interval = Math.floor(seconds / 31536000)
 
