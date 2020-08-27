@@ -66,7 +66,16 @@
 </template>
 
 <script>
+import {
+  ValidationProvider,
+  ValidationObserver
+} from 'vee-validate/dist/vee-validate.full'
+
 export default {
+  components: {
+    'validation-observer': ValidationObserver,
+    'validation-provider': ValidationProvider
+  },
   data() {
     return {
       purpose: {
@@ -85,6 +94,9 @@ export default {
     }
   },
   methods: {
+    getValidationState({ dirty, validated, valid = null }) {
+      return dirty || validated ? valid : null
+    },
     async onSubmit(ev) {
       ev.preventDefault()
       let { address, rate, expected_term_months, loan_amount_dollars } = this

@@ -32,8 +32,7 @@ module.exports = {
   /*
   ** Plugins to load before mounting the App
   */
-  plugins: [
-  ],
+  plugins: ['~/plugins/vee-validate'],
 
   /*
   ** Nuxt.js modules
@@ -58,9 +57,6 @@ module.exports = {
   ** Build configuration
   */
   build: {
-    // By default Nuxt ignores transpilation of the node_modules folder
-    // adding vee-validate/dist/rules to the list of sources that will be transpiled
-    // fixes "Unexpected Token: export" errors.
     transpile: ['vee-validate/dist/rules'],
     /*
     ** You can extend webpack config here
