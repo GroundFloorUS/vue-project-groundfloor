@@ -21,12 +21,11 @@
               </b-col>
             </b-row>
           </b-card-text>
-
-          <b-progress :value="10000" :max="investment.loan_amount_dollars" variant="secondary" class="mb-1" />
-          <p><strong>$10,000</strong> <span>funded</span></p>
+          <b-progress :value="investment.funded" :max="investment.loan_amount_dollars" variant="secondary" class="mb-1" />
+          <p><strong>${{ investment.funded || 0 }}</strong> <span>funded</span></p>
 
           <b-row align-v="center" class="mb-3 align-content-between no-gutters">
-            <div class="timestamp">{{ getTimeSince(investment.created_on) }}</div>
+            <p class="my-0"><time-stamp :date="investment.created_on" :responsive="true" /> ago</p>
             <b-button variant="outline-primary" class="ml-auto">
               <nuxt-link :to="'/investment/' + investment.id" class="card-link stretched-link">
                 View
@@ -50,45 +49,15 @@
 //   "fully_funded": 0,
 //   "created_on": "2020-08-26 21:22:00"
 // }
+import timeStamp from '../components/timestamp.vue'
 export default {
+  components: {
+    'time-stamp': timeStamp
+  },
   async asyncData({ $axios }) {
     let funding = await $axios.get('/api/funding')
     return {
       funding: funding.data
-    }
-  },
-  methods: {
-    /**
-     * Gets a date and generates a sentence indicating the amount of time
-     * that has passed since that date.
-     * TODO: Currently dates are saving several hours ahead of my current time zone.
-     * TODO: This should be replaced by a more robust system like moment.js
-     */
-    getTimeSince(date) {
-      const d = new Date(date)
-      let seconds = Math.floor((new Date() - d) / 1000)
-      let interval = Math.floor(seconds / 31536000)
-
-      if (interval > 1) {
-        return interval + ' years ago'
-      }
-      interval = Math.floor(seconds / 2592000)
-      if (interval > 1) {
-        return interval + ' months ago'
-      }
-      interval = Math.floor(seconds / 86400)
-      if (interval > 1) {
-        return interval + ' days ago'
-      }
-      interval = Math.floor(seconds / 3600)
-      if (interval > 1) {
-        return interval + ' hours ago'
-      }
-      interval = Math.floor(seconds / 60)
-      if (interval > 1) {
-        return interval + ' minutes ago'
-      }
-      return 'a few seconds ago'
     }
   }
 }
@@ -120,9 +89,6 @@ export default {
   letter-spacing: 0.2em;
   text-transform: uppercase;
 }
-.card.fundingCard .timestamp {
-  text-align: right;
-}
 .card.fundingCard .progress {
   border-radius: 1rem;
 }
@@ -141,9 +107,6 @@ export default {
   .card.fundingCard:hover {
     border-color: rgba(0, 0, 0, 0.125);
     transform: translate(0, 0);
-  }
-  .card.fundingCard .timestamp {
-    text-align: left;
   }
   .card.fundingCard .address {
     font-size: 1.25rem;
