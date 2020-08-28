@@ -4,7 +4,6 @@
 
     <validation-observer v-slot="{ handleSubmit }" ref="observer">
 
-
       <b-form @submit="onSubmit">
 
         <!-- purpose -->
