@@ -118,7 +118,7 @@ api.post('/investment', (req, res, next) => {
 })
 
 api.post('/funding', (req, res, next) => {
-  let { investment_id, amount } = req.body
+  let { investment_id, amount, funded } = req.body
 
   // get loan_amount_dollars
   db.get(
@@ -126,62 +126,58 @@ api.post('/funding', (req, res, next) => {
      FROM investment WHERE id = ?`,
     [investment_id],
     (err, investment) => {
-      console.log('GOT INVESTMENT', investment)
       if (err) {
         next(err)
       } else {
-        db.all(
-          `SELECT amount
-            FROM funding WHERE investment_id = ?`,
-          [investment_id],
-          (err, funds) => {
-            if (err) {
-              next(err)
-            } else {
-              const sumOfExistingFunds = funds.reduce(
-                (a, b) => a + (b['amount'] || 0),
-                0
-              )
-              const sumOfAllFunds =
-                parseInt(sumOfExistingFunds) + parseInt(amount)
-              const investmentLoanAmount = investment.loan_amount_dollars
-
-              if (sumOfAllFunds > investmentLoanAmount) {
-                const remainingAmount =
-                  parseInt(investmentLoanAmount) - parseInt(sumOfExistingFunds)
-                res.json({
-                  message: `Fund amount requested would overfund the loan. Choose an amount that is $${remainingAmount} or lower!`
-                })
-              } else {
-                db.serialize(() => {
-                  db.run(
-                    `INSERT INTO funding
-                      (investment_id, amount)
-                     VALUES (?, ?);
-                    `,
-                    [investment_id, amount],
-                    err => {
-                      if (err) {
-                        next(err)
-                      }
-                      db.get(
-                        `SELECT id, investment_id, amount, created_on
-                         FROM funding WHERE rowid = ?`,
-                        [this.lastID],
-                        (err, row) => {
-                          if (err) {
-                            next(err)
-                          }
-                          res.json(row)
-                        }
-                      )
-                    }
-                  )
-                })
-              }
-            }
+        if (funded + parseInt(amount) > investment.loan_amount_dollars) {
+          const remainingAmount =
+            parseInt(investment.loan_amount_dollars) - funded
+          res.json({
+            message: `Fund amount requested would overfund the loan. Choose an amount that is $${remainingAmount} or lower!`
+          })
+        } else {
+          let fully_funded
+          if (funded + parseInt(amount) === investment.loan_amount_dollars) {
+            fully_funded = 1
+          } else {
+            fully_funded = 0
           }
-        )
+          db.serialize(() => {
+            db.run(
+              `INSERT INTO funding
+                (investment_id, amount)
+                VALUES (?, ?);`,
+              [investment_id, amount],
+              err => {
+                if (err) {
+                  next(err)
+                }
+                db.get(
+                  `SELECT id, investment_id, amount, created_on
+                    FROM funding WHERE rowid = ?`,
+                  [this.lastID],
+                  (err, row) => {
+                    if (err) {
+                      next(err)
+                    }
+                    res.json(row)
+                  }
+                )
+              }
+            )
+            db.run(
+              `UPDATE investment
+                 SET fully_funded = ?
+                 WHERE id = ?;`,
+              [fully_funded, investment_id],
+              err => {
+                if (err) {
+                  next(err)
+                }
+              }
+            )
+          })
+        }
       }
     }
   )

@@ -21,8 +21,8 @@
       <p class="mr-4 my-4"><strong>rate:</strong> {{ investment.rate }}%</p>
       <p class="mr-4 my-4"><strong>projected term:</strong> {{ investment.expected_term_months }} mo.</p>
     </b-row>
-    <b-progress :value="investment.funded" :max="investment.loan_amount_dollars" variant="secondary" class="mb-1" />
-    <p class="text-right mb-5"><strong>${{ investment.funded || 0 }}</strong> / ${{ investment.loan_amount_dollars }} funded in the past <time-stamp :date="investment.created_on" :responsive="false" /></p>
+    <b-progress :value="amountFunded" :max="investment.loan_amount_dollars" variant="secondary" class="mb-1" />
+    <p class="text-right mb-5"><strong>${{ amountFunded }}</strong> / ${{ investment.loan_amount_dollars }} funded in the past <time-stamp :date="investment.created_on" :responsive="false" /></p>
     <div>
       <validation-observer v-slot="{ handleSubmit }" ref="observer" slim>
         <b-modal id="modalFund" ref="modalFund" centered size="sm" title="Fund Amount" @ok.prevent="handleSubmit(onSubmit)" @shown="focusField">
@@ -125,12 +125,13 @@ export default {
     }
   },
   computed: {
+    amountFunded() {
+      const vm = this
+      return vm.funds.reduce((a, b) => a + (b['amount'] || 0), 0)
+    },
     toBeFunded() {
       const vm = this
-      return (
-        vm.investment.loan_amount_dollars - vm.investment.funded ||
-        vm.investment.loan_amount_dollars
-      )
+      return this.investment.loan_amount_dollars - vm.amountFunded
     }
   },
   created() {
@@ -154,7 +155,8 @@ export default {
       let { amount, investment } = this
       let b = {
         investment_id: investment.id,
-        amount
+        amount,
+        funded: vm.amountFunded
       }
       let funding = await this.$axios({
         method: 'post',
