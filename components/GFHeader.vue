@@ -40,4 +40,7 @@ img.gf-header-brand {
 .invest-dropdown {
   padding-top: 8px;
 }
+.error-text {
+  color: #ff0000;
+}
 </style>

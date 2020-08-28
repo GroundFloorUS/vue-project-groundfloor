@@ -17,6 +17,9 @@
                       v-model="address"
                       type="text"
                       name="address" />
+        <p v-if="userInput.address.isInvalid">
+          <span class="error-text">{{ userInput.address.message }}</span> 
+        </p>
       </b-form-group>
       
       <b-form-group label="Rate"
@@ -30,6 +33,9 @@
             <span class="input-group-text">%</span>
           </b-input-group-append>
         </b-input-group>
+        <p v-if="userInput.rate.isInvalid">
+          <span class="error-text">{{ userInput.rate.message }}</span> 
+        </p>
       </b-form-group>
 
       <b-form-group label="Expected Term"
@@ -56,6 +62,9 @@
                         type="number"
                         name="loan_amount_dollars"/>
         </b-input-group>
+        <p v-if="userInput.loan_amount_dollars.isInvalid">
+          <span class="error-text">{{ userInput.loan_amount_dollars.message }}</span> 
+        </p>
       </b-form-group>
 
       <b-button type="submit" variant="primary">Submit</b-button>
@@ -81,7 +90,21 @@ export default {
       address: '',
       rate: 10,
       expected_term_months: 12,
-      loan_amount_dollars: 100000
+      loan_amount_dollars: 100000,
+      userInput: {
+        address: {
+          isInvalid: false,
+          message: 'Please enter an address'
+        },
+        rate: {
+          isGood: false,
+          message: 'Please enter a rate greater than 5%'
+        },
+        loan_amount_dollars: {
+          isGood: false,
+          message: 'To best serve you, we require an amount greater than $50000'
+        }
+      }
     }
   },
   methods: {
@@ -95,6 +118,32 @@ export default {
         expected_term_months,
         loan_amount_dollars
       }
+
+      let errorCount = 0
+
+      if (this.address.length <= 6) {
+        this.userInput.address.isInvalid = true
+        errorCount++
+      } else {
+        this.userInput.address.isInvalid = false
+      }
+      if (this.rate <= 5) {
+        this.userInput.rate.isInvalid = true
+        errorCount++
+      } else {
+        this.userInput.rate.isInvalid = false
+      }
+      if (this.loan_amount_dollars <= 50000) {
+        this.userInput.loan_amount_dollars.isInvalid = true
+        errorCount++
+      } else {
+        this.userInput.loan_amount_dollars.isInvalid = false
+      }
+
+      if (errorCount > 0) {
+        return
+      }
+
       let investment = await this.$axios({
         method: 'post',
         url: '/api/investment',

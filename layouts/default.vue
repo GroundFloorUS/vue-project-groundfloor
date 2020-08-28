@@ -5,8 +5,7 @@
       <nuxt/>
     </main>
   </div>
-</template>
-
+</template>        
 <script>
 import GFHeader from '../components/GFHeader.vue'
 
