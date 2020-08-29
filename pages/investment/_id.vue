@@ -3,7 +3,8 @@
     <h1 class="title">LOAN</h1>
     <p>Address: {{ investment.address }}</p>
     <p>Purpose: {{ investment.purpose }}</p>
-    <p>{{ new Intl.NumberFormat('en', {style: 'currency', currency: 'USD'}).format(investment.loan_amount_dollars) }}</p>
+    <p>{{ new Intl.NumberFormat('en', {style: 'currency', currency: 'USD'}).format(investment.loan_amount_dollars) }}
+    <span v-if="investment.loan_amount_dollars == 0" class="text-success">Congratulations, this loan is fully funded</span></p>
     <section>
       <h3 class="subtitle">
         Invest in Funds
@@ -73,6 +74,7 @@ export default {
       } else {
         let addedAmount = parseInt(this.addedFunds)
         this.addedFunds = amountFromForm + addedAmount
+        this.investment.loan_amount_dollars = this.loanBalance
         let f = {
           investment_id: this.investment.id,
           amount: this.addedFunds,
@@ -83,26 +85,17 @@ export default {
           url: `/api/fund`,
           data: f
         })
-        if (this.addedFunds === this.investment.loan_amount_dollars) {
+        if (this.investment.loan_amount_dollars === 0) {
           this.showFullyFunded = true
-          let p = {
-            address: this.investment.address,
-            created_on: this.investment.created_on,
-            expected_term_months: this.investment.expected_term_months,
-            fully_funded: 1,
-            id: this.investment.id,
-            loan_amount_dollars: this.investment.loan_amount_dollars,
-            purpose: this.investment.purpose,
-            rate: this.investment.rate
-          }
-          console.log(p)
-          //This is where I left off, still needs work though
-          // this.investment = await this.$axios({
-          //   method: 'put',
-          //   url: `/api/investment/${this.investment.id}`,
-          //   data: p
-          // })
+          this.investment.fully_funded = 1
         }
+        console.log(this.investment)
+        let newBalance = await this.$axios({
+          method: 'put',
+          url: `/api/investment/${this.investment.id}`,
+          data: this.investment
+        })
+        this.$router.push({ path: '/funding' })
       }
     },
     goBack() {

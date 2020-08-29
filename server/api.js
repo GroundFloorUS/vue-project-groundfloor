@@ -107,22 +107,32 @@ api.post('/fund', (req, res, next) => {
   })
 })
 
-api.post('/investment', (req, res, next) => {
+api.put('/investment/:id', (req, res, next) => {
+  console.log(req.body)
   let {
+    id,
     purpose,
     address,
     rate,
     expected_term_months,
+    fully_funded,
     loan_amount_dollars
   } = req.body
 
   db.serialize(() => {
     db.run(
       `INSERT INTO investment 
-        (purpose, address, rate, expected_term_months, loan_amount_dollars)
-       VALUES (?, ?, ?, ?, ?);
+        (purpose, address, rate, expected_term_months, loan_amount_dollars, fully_funded)
+       VALUES (?, ?, ?, ?, ?, ?);
       `,
-      [purpose, address, rate, expected_term_months, loan_amount_dollars],
+      [
+        purpose,
+        address,
+        rate,
+        expected_term_months,
+        loan_amount_dollars,
+        fully_funded
+      ],
       err => {
         if (err) {
           next(err)
