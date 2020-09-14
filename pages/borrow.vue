@@ -2,7 +2,7 @@
   <b-container>
     <h2 class="title">BORROW</h2>
 
-    <b-form @submit="onSubmit">
+    <b-form ref="borrowSubmitForm" @submit="onSubmit">
       <b-form-group label="Purpose"
                     label-for="purpose">
         <b-form-select id="purpose"
@@ -16,13 +16,14 @@
         <b-form-input id="address"
                       v-model="address"
                       type="text"
-                      name="address" />
+                      name="address" required/>
       </b-form-group>
-      
+
       <b-form-group label="Rate"
                     label-for="rate">
         <b-input-group>
           <b-form-input id="rate"
+                        :min="rate"
                         v-model="rate"
                         type="number"
                         name="rate"/>
@@ -52,6 +53,7 @@
             <span class="input-group-text">$</span>
           </b-input-group-prepend>
           <b-form-input id="loan_amount_dollars"
+                        :min="loan_amount_dollars"
                         v-model="loan_amount_dollars"
                         type="number"
                         name="loan_amount_dollars"/>
@@ -61,7 +63,7 @@
       <b-button type="submit" variant="primary">Submit</b-button>
 
     </b-form>
-      
+
   </b-container>
 </template>
 

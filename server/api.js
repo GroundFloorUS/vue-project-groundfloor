@@ -5,7 +5,7 @@ let api = express.Router()
 
 api.get('/funding', (req, res, next) => {
   db.all(
-    `SELECT * FROM investment 
+    `SELECT * FROM investment
        WHERE fully_funded = 0
        ORDER BY created_on DESC
     `,
@@ -20,7 +20,7 @@ api.get('/funding', (req, res, next) => {
 
 api.get('/funded', (req, res, next) => {
   db.all(
-    `SELECT * FROM investment 
+    `SELECT * FROM investment
        WHERE fully_funded = 1
        ORDER BY created_on DESC
     `,
@@ -90,7 +90,7 @@ api.post('/investment', (req, res, next) => {
 
   db.serialize(() => {
     db.run(
-      `INSERT INTO investment 
+      `INSERT INTO investment
         (purpose, address, rate, expected_term_months, loan_amount_dollars)
        VALUES (?, ?, ?, ?, ?);
       `,
@@ -118,6 +118,40 @@ api.post('/investment', (req, res, next) => {
 
 api.post('/funding', (req, res, next) => {
   let { investment_id, amount } = req.body
+
+  db.serialize(() => {
+    db.run(
+      `INSERT INTO funding
+        (investment_id, amount)
+       VALUES (?, ?);
+      `,
+      [investment_id, amount],
+      err => {
+        if (err) {
+          next(err)
+        }
+        db.get(
+          `SELECT id, investment_id, amount, created_on
+           FROM funding WHERE rowid = ?`,
+          [this.lastID],
+          (err, row) => {
+            if (err) {
+              next(err)
+            }
+            res.json(row)
+          }
+        )
+      }
+    )
+  })
+})
+
+// Verify if we use a new /fund or existing /fundings
+api.post('/fund', (req, res, next) => {
+  let { investment_id, amount } = req.body
+  // TODO:
+  // Change the /api/fund endpoint so that it checks if a fund has been fully funded. Reject a new investment if it's too much for that loan.
+  // Change the /api/fund endpoint so that if it fully funds a loan, it sets the db record's investment.fully_funded to 1. Then it will appear on the FUNDED screen.
 
   db.serialize(() => {
     db.run(
