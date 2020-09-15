@@ -23,7 +23,7 @@
                     label-for="rate">
         <b-input-group>
           <b-form-input id="rate"
-                        :min="rate"
+                        :min="minValidRate"
                         v-model="rate"
                         type="number"
                         name="rate"/>
@@ -53,7 +53,7 @@
             <span class="input-group-text">$</span>
           </b-input-group-prepend>
           <b-form-input id="loan_amount_dollars"
-                        :min="loan_amount_dollars"
+                        :min="minLoanAmountDollars"
                         v-model="loan_amount_dollars"
                         type="number"
                         name="loan_amount_dollars"/>
@@ -83,7 +83,9 @@ export default {
       address: '',
       rate: 10,
       expected_term_months: 12,
-      loan_amount_dollars: 100000
+      loan_amount_dollars: 100000,
+      minValidRate: 6,
+      minLoanAmountDollars: 50001
     }
   },
   methods: {

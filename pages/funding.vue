@@ -12,15 +12,15 @@
         >
           <b-card-text class="container">
             <p>expected term months: {{ investment.expected_term_months }}</p>
-            <p>expected term months: {{ investment.fully_funded }}</p>
-            <p>{{ investment.address }}</p>
+            <p>fully funded: {{ !!investment.fully_funded }}</p>
+            <p>address: {{ investment.address }}</p>
             <p>loan amount:
               {{ investment.loan_amount_dollars }}
             </p>
+            <p>loan amount funded: {{ investment.loanAmtFunded }}</p>
           </b-card-text>
         </b-card>
       </nuxt-link>
-
     </div>
   </b-container>
 </template>
@@ -31,8 +31,19 @@
 export default {
   async asyncData({ $axios }) {
     let funding = await $axios.get('/api/funding')
+
+    // inefficient: maybe this should be nearer the db
+    let ps = funding.data.map(p => {
+      return $axios.get(`/api/investment/${p.id}`)
+    })
+    let fundingv2 = await Promise.all(ps).then(p =>
+      p.map(d => {
+        return d.data
+      })
+    )
+
     return {
-      funding: funding.data
+      funding: fundingv2
     }
   }
 }
