@@ -2,8 +2,8 @@
   <b-container>
     <h2 class="title">BORROW</h2>
 
-    <b-form novalidate="true" @submit="onSubmit">
-      <b-alert :show="invalid" variant="danger" fade="true">
+    <b-form @submit="onSubmit">
+      <b-alert :show="invalid" variant="danger">
         Please correct the errors below.
       </b-alert>
       <b-form-group label="Purpose"
