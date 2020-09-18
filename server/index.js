@@ -5,12 +5,14 @@ const bodyParser = require('body-parser')
 const morgan = require('morgan')
 const api = require('./api')
 const db = require('./db')
+const cors = require('cors')
 
 const app = express()
 const host = process.env.HOST || '127.0.0.1'
 const port = 3333
 
 app.set('port', port)
+app.use(cors())
 app.use(bodyParser.json())
 app.use(morgan('combined'))
 app.use('/api', api)
