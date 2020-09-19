@@ -3,7 +3,7 @@
     <h2 class="title">FUNDING</h2>
 
     <div>
-      <b-table :fields="fields" :items="funding" striped hover>
+      <b-table :fields="fields" :items="funding" empty-text="There are no active investments." striped hover show-empty>
         <template v-slot:cell(address)="data">
           <nuxt-link :to="'/investment/' + data.item.id">
             {{ data.item.address }}
