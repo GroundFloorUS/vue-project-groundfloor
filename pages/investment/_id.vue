@@ -17,6 +17,10 @@
         {{ error }}
       </b-alert>
 
+      <b-alert v-if="willFullyFund" show variant="success">
+        This will fully fund the investment!
+      </b-alert>
+      
       <b-form @submit="onSubmit">
         <b-form-group label="Amount"
                       label-for="amount">
@@ -82,6 +86,13 @@ export default {
   computed: {
     amountState() {
       return this.amount >= 0
+    },
+    willFullyFund() {
+      return (
+        Number(this.amount) + Number(this.investment.current_funding) ===
+        Number(this.investment.loan_amount_dollars)
+      )
+      return false
     }
   },
   methods: {
