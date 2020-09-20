@@ -40,6 +40,10 @@ export default {
           formatter: 'formatCurrency'
         },
         {
+          key: 'current_funding',
+          formatter: 'formatCurrency'
+        },
+        {
           key: 'created_on',
           formatter: 'formatDate'
         }

@@ -1,7 +1,9 @@
 <template>
   <b-container>
     <h1 class="title">LOAN</h1>
-    <b-jumbotron :header="investment.address" :lead="investment.purpose" />
+    <b-jumbotron :header="investment.address" :lead="investment.purpose">
+      <p>{{ formatCurrency(investment.current_funding) }} funded out of {{ formatCurrency(investment.loan_amount_dollars) }}</p>
+    </b-jumbotron>
     
     <section class="investment_funds">
       <h3 class="subtitle">Loan Funds</h3>

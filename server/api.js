@@ -5,9 +5,13 @@ let api = express.Router()
 
 api.get('/funding', (req, res, next) => {
   db.all(
-    `SELECT * FROM investment 
+    `SELECT investment.*, COALESCE(SUM(funding.amount), 0) as current_funding
+       FROM investment
+       LEFT JOIN funding
+       ON funding.investment_id = investment.id
        WHERE fully_funded = 0
-       ORDER BY created_on DESC
+       GROUP BY investment.id
+       ORDER BY investment.created_on DESC;
     `,
     (err, rows) => {
       if (err) {
@@ -35,9 +39,13 @@ api.get('/funded', (req, res, next) => {
 
 api.get('/investment/:id', (req, res, next) => {
   db.get(
-    `SELECT id, purpose, address, rate, expected_term_months, loan_amount_dollars,
-                  fully_funded, created_on
-           FROM investment WHERE id = ?`,
+    `SELECT investment.id, purpose, address, rate, expected_term_months, loan_amount_dollars, fully_funded,
+       investment.created_on, COALESCE(SUM(funding.amount), 0) as current_funding
+           FROM investment
+           LEFT JOIN funding
+           ON funding.investment_id = investment.id
+           WHERE investment.id = ?
+           GROUP BY investment.id`,
     [Number(req.params.id)],
     (err, row) => {
       if (err) {
