@@ -61,7 +61,7 @@ export default {
       if (isNaN(date.getTime())) {
         return ''
       } else {
-        return date.toLocaleString()
+        return date.toLocaleDateString('en-US')
       }
     }
   }
