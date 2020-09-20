@@ -11,6 +11,10 @@
     </section>
     
     <b-container>
+      <b-alert :show="showError" variant="danger">
+        {{ error }}
+      </b-alert>
+
       <b-form @submit="onSubmit">
         <b-form-group label="Amount"
                       label-for="amount">
@@ -68,7 +72,9 @@ export default {
   },
   data() {
     return {
-      amount: 500
+      amount: 500,
+      showError: false,
+      error: null
     }
   },
   computed: {
@@ -93,7 +99,16 @@ export default {
         data: b
       })
 
-      location.reload()
+      console.log('Funding data:', funding)
+      if (funding.data.error) {
+        console.log('Error: ', funding.data.error)
+        this.showError = true
+        this.error = funding.data.error
+      } else {
+        this.showError = false
+        this.error = null
+        location.reload()
+      }
     },
     formatCurrency(value) {
       const formatter = new Intl.NumberFormat('en-US', {
