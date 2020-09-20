@@ -40,11 +40,6 @@ export default {
           formatter: 'formatCurrency'
         },
         {
-          key: 'fully_funded',
-          label: 'Fully Funded?',
-          formatter: 'formatFunded'
-        },
-        {
           key: 'created_on',
           formatter: 'formatDate'
         }
@@ -60,9 +55,6 @@ export default {
       })
 
       return formatter.format(value)
-    },
-    formatFunded(value) {
-      return value == 1 ? 'Yes' : 'No'
     },
     formatDate(value) {
       const date = new Date(value)
