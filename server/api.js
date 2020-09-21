@@ -127,6 +127,7 @@ api.post('/investment', (req, res, next) => {
 api.post('/funding', (req, res, next) => {
   let { investment_id, amount } = req.body
 
+  // Check for the current funding level, if funded, reject the call, otherwise store the funding item
   db.get(
     `SELECT investment.id, loan_amount_dollars, fully_funded, SUM(funding.amount) as total_funding
      FROM investment
@@ -155,8 +156,8 @@ api.post('/funding', (req, res, next) => {
                 next(err)
               }
 
+              // If the investment has full funding, mark it in the investment record
               if (total == Number(funding_row.loan_amount_dollars)) {
-                // funded
                 db.run("UPDATE investment SET fully_funded = 1 WHERE id = ?", investment_id)
               } 
               db.get(
