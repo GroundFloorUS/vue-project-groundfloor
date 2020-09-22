@@ -80,3 +80,8 @@ dist
 # IDE
 .idea
 /server/groundfloor.db
+
+# I'M A MAC GUY
+.DS_Store
+
+yarn.lock

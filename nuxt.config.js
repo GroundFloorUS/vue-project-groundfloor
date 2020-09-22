@@ -2,7 +2,7 @@ const pkg = require('./package')
 
 module.exports = {
   mode: 'universal',
-
+  telemetry: false,
   /*
   ** Headers of the page
   */
@@ -33,6 +33,7 @@ module.exports = {
   ** Plugins to load before mounting the App
   */
   plugins: [
+    '~/plugins/validation'
   ],
 
   /*
@@ -61,6 +62,9 @@ module.exports = {
     /*
     ** You can extend webpack config here
     */
+    vendor: [
+      'vuelidate'
+    ],
     extend(config, ctx) {
       // Run ESLint on save
       if (ctx.isDev && ctx.isClient) {
