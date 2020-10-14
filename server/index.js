@@ -1,4 +1,5 @@
 const express = require('express')
+const cors = require('cors')
 const consola = require('consola')
 const { Nuxt, Builder } = require('nuxt')
 const bodyParser = require('body-parser')
@@ -11,6 +12,7 @@ const host = process.env.HOST || '127.0.0.1'
 const port = 3333
 
 app.set('port', port)
+app.use(cors())
 app.use(bodyParser.json())
 app.use(morgan('combined'))
 app.use('/api', api)
