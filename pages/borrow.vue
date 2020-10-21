@@ -15,8 +15,10 @@
                     label-for="address">
         <b-form-input id="address"
                       v-model="address"
+                      :state="addressState"
                       type="text"
                       name="address" />
+        <b-form-invalid-feedback>You must enter an address</b-form-invalid-feedback>
       </b-form-group>
       
       <b-form-group label="Rate"
@@ -24,11 +26,13 @@
         <b-input-group>
           <b-form-input id="rate"
                         v-model="rate"
+                        :state="rateState"
                         type="number"
                         name="rate"/>
           <b-input-group-append>
             <span class="input-group-text">%</span>
           </b-input-group-append>
+          <b-form-invalid-feedback>Rate must be above 5%</b-form-invalid-feedback>
         </b-input-group>
       </b-form-group>
 
@@ -53,12 +57,19 @@
           </b-input-group-prepend>
           <b-form-input id="loan_amount_dollars"
                         v-model="loan_amount_dollars"
+                        :state="loanAmountState"
                         type="number"
                         name="loan_amount_dollars"/>
+          <b-form-invalid-feedback>Loan amount can't be below $50,000</b-form-invalid-feedback>
         </b-input-group>
       </b-form-group>
 
-      <b-button type="submit" variant="primary">Submit</b-button>
+      <b-button
+        :disabled="!formCanSubmit"
+        type="submit" 
+        variant="primary" 
+      >
+        Submit</b-button>
 
     </b-form>
       
@@ -82,6 +93,20 @@ export default {
       rate: 10,
       expected_term_months: 12,
       loan_amount_dollars: 100000
+    }
+  },
+  computed: {
+    addressState() {
+      return !!this.address
+    },
+    rateState() {
+      return this.rate >= 5
+    },
+    loanAmountState() {
+      return this.loan_amount_dollars >= 50000
+    },
+    formCanSubmit() {
+      return this.addressState && this.rateState && this.loanAmountState
     }
   },
   methods: {
