@@ -14,7 +14,8 @@
           <b-alert :show="funds.length === 0">There are no investments on this loan</b-alert>
           <b-list-group flush>
             <b-list-group-item v-for="fund in funds" :key="fund.id" class="d-flex">
-              <strong class="mr-auto">${{ fund.amount | formatDollars }}</strong>{{ fund.created_on | formatDate }}
+              {{ fund.created_on | formatDate }}
+              <strong class="pl-2">${{ fund.amount | formatDollars }}</strong>
             </b-list-group-item>
           </b-list-group>    
         </b-card>
@@ -22,28 +23,38 @@
       <b-col cols="6">
         <b-card>
           <h3 class="subtitle">Invest</h3>
-          <b-form @submit="onSubmit">
-            <label for="amount">${{ amountRemaining | formatDollars }} until fully funded</label>
-            <b-input-group>
-              <b-input-group-prepend>
-                <span class="input-group-text">$</span>
-              </b-input-group-prepend>
-              <b-form-input id="amount"
-                            :state="investmentState"
-                            v-model="amount"
-                            type="number"
-                            name="amount"/>
-              <b-form-invalid-feedback>Investment can't be more than remaining ${{ amountRemaining | formatDollars }}</b-form-invalid-feedback>
-            </b-input-group>
-            <b-form-text v-show="amountRemainingAfterPurchase > 0">
-              ${{ amountRemainingAfterPurchase | formatDollars }} remaining after your investment
-            </b-form-text>
-            <b-form-text v-show="amountRemainingAfterPurchase === 0">
-              Your investment will fully fund this loan
-            </b-form-text>
+          <div v-if="amountRemaining > 0">
+            <b-form @submit="onSubmit">
+              <label for="amount">
+                ${{ amountRemaining | formatDollars }} until fully funded
+              </label>
+              <b-input-group>
+                <b-input-group-prepend>
+                  <span class="input-group-text">$</span>
+                </b-input-group-prepend>
+                <b-form-input id="amount"
+                              :state="investmentState"
+                              v-model="amount"
+                              type="number"
+                              name="amount"/>
+                <b-form-invalid-feedback>Investment can't be more than remaining ${{ amountRemaining | formatDollars }}</b-form-invalid-feedback>
+              </b-input-group>
+              <b-form-text v-show="amountRemainingAfterPurchase > 0">
+                ${{ amountRemainingAfterPurchase | formatDollars }} remaining after your investment
+              </b-form-text>
+              <b-form-text v-show="amountRemainingAfterPurchase === 0">
+                Your investment will fully fund this loan
+              </b-form-text>
 
-            <b-button type="submit" variant="primary" class="mt-3">Submit</b-button>
-          </b-form>
+              <b-button disabled="!canSubmit" type="submit" variant="primary" class="mt-3">Submit</b-button>
+            </b-form>
+          </div>
+          <div v-else>
+
+            <b-alert show>
+              This loan has been fully funded
+            </b-alert>
+          </div>
         </b-card>
       </b-col>
       
@@ -76,6 +87,9 @@ export default {
     },
     amountRemainingAfterPurchase() {
       return this.amountRemaining - this.amount
+    },
+    canSubmit() {
+      return this.amount > 0 && this.amountRemaining > 0
     }
   },
   methods: {
