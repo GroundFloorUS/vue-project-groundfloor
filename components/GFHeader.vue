@@ -12,7 +12,7 @@
 
       <b-navbar-nav class="ml-auto">
 
-        <b-nav-item-dropdown text="INVEST" right class="invest-dropdown">
+        <b-nav-item-dropdown ref="navdropdown" text="INVEST" right class="invest-dropdown">
           <nuxt-link class="dropdown-item" role="menuitem" to="/funding">
             FUNDING
           </nuxt-link>
@@ -32,6 +32,15 @@
     </b-collapse>
   </b-navbar>
 </template>
+<script>
+export default {
+  watch: {
+    $route() {
+      this.$refs.navdropdown.hide()
+    }
+  }
+}
+</script>
 
 <style>
 img.gf-header-brand {
