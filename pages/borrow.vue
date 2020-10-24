@@ -2,7 +2,7 @@
   <b-container>
     <h2 class="title">BORROW</h2>
 
-    <b-form @submit="onSubmit">
+    <b-form novalidate @submit="onSubmit">
       <b-form-group label="Purpose"
                     label-for="purpose">
         <b-form-select id="purpose"
@@ -15,8 +15,11 @@
                     label-for="address">
         <b-form-input id="address"
                       v-model="address"
+                      :state="hasValidAddress"
                       type="text"
                       name="address" />
+
+        <b-form-invalid-feedback id="address-validation">You must enter a valid address</b-form-invalid-feedback>
       </b-form-group>
       
       <b-form-group label="Rate"
@@ -24,12 +27,17 @@
         <b-input-group>
           <b-form-input id="rate"
                         v-model="rate"
+                        :state="hasValidRate"
                         type="number"
-                        name="rate"/>
+                        name="rate"
+                        step="0.01"/>
           <b-input-group-append>
             <span class="input-group-text">%</span>
           </b-input-group-append>
+          
+          <b-form-invalid-feedback id="rate-validation">Your rate must be more than 5%</b-form-invalid-feedback>
         </b-input-group>
+        
       </b-form-group>
 
       <b-form-group label="Expected Term"
@@ -38,14 +46,15 @@
           <b-form-input id="expected_term_months"
                         v-model="expected_term_months"
                         type="number"
-                        name="expected_term_months"/>
+                        name="expected_term_months"
+                        step="1"/>
           <b-input-group-append>
             <span class="input-group-text">months</span>
           </b-input-group-append>
         </b-input-group>
       </b-form-group>
 
-      <b-form-group label="LoanAmount"
+      <b-form-group label="Loan Amount"
                     label-for="loan_amount_dollars">
         <b-input-group>
           <b-input-group-prepend>
@@ -53,12 +62,15 @@
           </b-input-group-prepend>
           <b-form-input id="loan_amount_dollars"
                         v-model="loan_amount_dollars"
+                        :state="hasValidAmount"
                         type="number"
-                        name="loan_amount_dollars"/>
+                        name="loan_amount_dollars"
+                        step="1"/>
+          <b-form-invalid-feedback id="rate-validation">You must request a whole dollar amount more than $50,000</b-form-invalid-feedback>
         </b-input-group>
       </b-form-group>
 
-      <b-button type="submit" variant="primary">Submit</b-button>
+      <b-button :disabled="isDisabled" type="submit" variant="primary">Submit</b-button>
 
     </b-form>
       
@@ -84,6 +96,21 @@ export default {
       loan_amount_dollars: 100000
     }
   },
+  computed: {
+    hasValidAddress: function() {
+      return this.address !== ''
+    },
+    hasValidRate: function() {
+      return Number(this.rate) > 5
+    },
+    hasValidAmount: function() {
+      const amount = Number(this.loan_amount_dollars)
+      return amount > 50000 && Number.isInteger(amount)
+    },
+    isDisabled: function() {
+      return !this.hasValidAddress || !this.hasValidRate || !this.hasValidAmount
+    }
+  },
   methods: {
     async onSubmit(ev) {
       ev.preventDefault()
@@ -95,6 +122,7 @@ export default {
         expected_term_months,
         loan_amount_dollars
       }
+      if (this.isDisabled) return
       let investment = await this.$axios({
         method: 'post',
         url: '/api/investment',
