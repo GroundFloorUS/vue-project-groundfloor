@@ -2,28 +2,32 @@
   <b-container>
     <h2 class="title">FUNDING</h2>
 
-    <ul class="funding-list">
-      <li v-for="investment in funding" :key="investment.id">
-        <p>
-          <nuxt-link :to="'/investment/' + investment.id">
-            {{ investment.address }}
-          </nuxt-link>
-        </p>
-        <p>
-          {{ investment.loan_amount_dollars }}
-        </p>
-      </li>
-    </ul>
+    <loan-list :investments="investments">
+
+      <template #empty-text>
+        <p>There aren't any loan requests to fund. Check back again soon!</p>
+      </template>
+
+      <template #component="{ investment }">
+        <loan-card :investment="investment" />
+      </template>
+    
+    </loan-list>
+
   </b-container>
 </template>
 
 <script>
+import LoanCard from '~/components/LoanCard.vue'
+import LoanList from '~/components/LoanList.vue'
+
 export default {
   async asyncData({ $axios }) {
     let funding = await $axios.get('/api/funding')
     return {
-      funding: funding.data
+      investments: funding.data
     }
-  }
+  },
+  components: { LoanCard, LoanList }
 }
 </script>
