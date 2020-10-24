@@ -17,7 +17,7 @@
     
     <div class="flex">
       <div>
-        Requested Amount: ${{ (investment.funded|| 0) | commafy }} of ${{ investment.loan_amount_dollars | commafy }}
+        Amount: <span v-if="showProgress">${{ (investment.funded || 0) | commafy }} of </span>${{ investment.loan_amount_dollars | commafy }}
       </div>
       <div>
         Term: {{ investment.expected_term_months }} months

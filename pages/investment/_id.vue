@@ -20,7 +20,7 @@
       <section v-if="!investment.fully_funded">
         <h3 class="subtitle">Your Contribution</h3>
         <b-form @submit="onSubmit">
-          <div class="remaining">Amount remaning to fund: <strong>${{ remainingAmount | commafy }}</strong></div>
+          
           <b-form-group label="Amount to Fund" label-for="amount">
             <b-input-group>
               <b-input-group-prepend>
@@ -44,6 +44,9 @@
             The amount you are offering to invest is more than the amount available to fund. Please reduce your fund amount. The maximum you can fund is <strong>${{ remainingAmount | commafy }}</strong>.
           </b-alert>
           <b-alert :show="isExactAmount" variant="success">Your investment will fully fund this loan!</b-alert>
+
+          <div>Amount remaining to invest: <strong>${{ remainingAmount | commafy }}</strong></div>
+          <div v-show="!isDisabled">Amount remaining after your investment: <strong>${{ remainingAmount - amount | commafy }}</strong></div>
 
           <hr >
           <div class="expectation">
