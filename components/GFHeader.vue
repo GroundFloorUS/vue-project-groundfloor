@@ -23,9 +23,9 @@
 
         </b-nav-item-dropdown>
 
-        <b-nav-item>
+        <b-nav-text>
           <nuxt-link class="nav-link" role="menuitem" to="/borrow">BORROW</nuxt-link>
-        </b-nav-item>
+        </b-nav-text>
 
       </b-navbar-nav>
 
