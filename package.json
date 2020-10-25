@@ -11,7 +11,13 @@
     "generate": "nuxt generate",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
     "precommit": "npm run lint",
-    "test": "ava"
+    "test": "ava",
+    "dev:test": "cross-env NODE_ENV=test nodemon server/index.js --watch server",
+    "e2e": "cypress open --browser chrome",
+    "e2e:silent": "cypress run",
+    "db:reset": "cat seeds/reset.sql | sqlite3 server/groundfloor_test.db",
+    "db:seed-investment": "cat seeds/investment.sql | sqlite3 server/groundfloor_test.db",
+    "db:seed-funding": "cat seeds/funding.sql | sqlite3 server/groundfloor_test.db"
   },
   "dependencies": {
     "@nuxtjs/axios": "^5.0.0",
@@ -31,6 +37,7 @@
   "devDependencies": {
     "ava": "^1.1.0",
     "babel-eslint": "^8.2.1",
+    "cypress": "^5.4.0",
     "eslint": "^5.0.1",
     "eslint-config-prettier": "^3.1.0",
     "eslint-loader": "^2.0.0",

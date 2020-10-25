@@ -6,7 +6,7 @@
         Back
       </b-button>
     </div>
-    <load-card :investment="investment" />
+    <load-card :investment="investment" :show-progress="!investment.fully_funded" />
 
     <div class="flex">
       <section class="investment_funds">
@@ -40,25 +40,28 @@
           <b-alert
             :show="isTooMuch"
             variant="danger"
+            data-testref="tooMuchAlert"
           >
             The amount you are offering to invest is more than the amount available to fund. Please reduce your fund amount. The maximum you can fund is <strong>${{ remainingAmount | commafy }}</strong>.
           </b-alert>
-          <b-alert :show="isExactAmount" variant="success">Your investment will fully fund this loan!</b-alert>
+          <b-alert :show="isExactAmount" variant="success" data-testref="isExactAlert">Your investment will fully fund this loan!</b-alert>
 
-          <div>Amount remaining to invest: <strong>${{ remainingAmount | commafy }}</strong></div>
-          <div v-show="!isDisabled">Amount remaining after your investment: <strong>${{ remainingAmount - amount | commafy }}</strong></div>
+          <div>Amount remaining to invest: <strong data-testref="remainingAmount">${{ remainingAmount | commafy }}</strong></div>
+          <div v-show="!isDisabled">Amount remaining after your investment: <strong data-testref="remainingAfterInvestment">${{ remainingAmount - amount | commafy }}</strong></div>
 
           <hr >
           <div class="expectation">
             <div>
               <span class="expectation__title">Inital Investment: </span>
-              ${{ amount | commafy }}</div>
+              <span data-testref="initial">${{ Number(amount) | commafy }}</span>
+            </div>
             <div>
               <span class="expectation__title">Interest: </span>
-              ${{ expectedInterest | commafy }}</div>
+              <span data-testref="interest">${{ expectedInterest | commafy }}</span>
+            </div>
             <div>
               <span class="expectation__title">Expected Return: </span>
-              <span class="expectation__total">${{ expectedReturn | commafy }}</span>
+              <span class="expectation__total" data-testref="return">${{ expectedReturn | commafy }}</span>
             </div>
           </div>
           <hr >

@@ -60,13 +60,13 @@
           <b-input-group-prepend>
             <span class="input-group-text">$</span>
           </b-input-group-prepend>
-          <b-form-input id="loan_amount_dollars"
+          <b-form-input id="amount"
                         v-model="loan_amount_dollars"
                         :state="hasValidAmount"
                         type="number"
                         name="loan_amount_dollars"
                         step="1"/>
-          <b-form-invalid-feedback id="rate-validation">You must request a whole dollar amount more than $50,000</b-form-invalid-feedback>
+          <b-form-invalid-feedback id="amount-validation">You must request a whole dollar amount more than $50,000</b-form-invalid-feedback>
         </b-input-group>
       </b-form-group>
 

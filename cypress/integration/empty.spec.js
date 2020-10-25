@@ -1,0 +1,97 @@
+describe('UI Interactions for List View', () => {
+  beforeEach(() => {
+    cy.exec('npm run db:reset')
+    cy.visit('/')
+  })
+
+  it('navigates to empty funding page', () => {
+    cy.visit('/funding')
+    cy.get('.empty-state')
+  })
+
+  it('navigates to empty funded page', () => {
+    cy.visit('/funded')
+    cy.get('.empty-state')
+      .find('a')
+      .click()
+
+    cy.location('pathname').should('equal', '/funding')
+  })
+
+  it('navigates to borrow page and updates the form', () => {
+    cy.visit('/borrow')
+
+    // initial state (no address)
+    cy.get('input#address').should('have.class', 'is-invalid')
+    cy.get('#address-validation').should('be.visible')
+    cy.get('button')
+      .contains('Submit')
+      .should('be.disabled')
+
+    cy.get('input#address').type('315 Homer Drive')
+    cy.get('input#address').should('have.class', 'is-valid')
+    cy.get('#address-validation').should('not.be.visible')
+    cy.get('button')
+      .contains('Submit')
+      .should('be.enabled')
+
+    // change rate to 2 (invalid)
+    cy.get('#rate-validation').should('not.be.visible')
+    cy.get('input#rate')
+      .should('have.class', 'is-valid')
+      .clear()
+      .type('2')
+      .should('have.class', 'is-invalid')
+    cy.get('button')
+      .contains('Submit')
+      .should('be.disabled')
+
+    // change rate to 5 (still invalid) then 5.1 (valid)
+    cy.get('input#rate')
+      .clear()
+      .type('5')
+      .should('have.class', 'is-invalid')
+      .type('.1')
+      .should('have.class', 'is-valid')
+    cy.get('button')
+      .contains('Submit')
+      .should('be.enabled')
+
+    // change amount to 50000 (invalid)
+    cy.get('input#amount')
+      .should('have.class', 'is-valid')
+      .clear()
+      .type('50000')
+      .should('have.class', 'is-invalid')
+    cy.get('#amount-validation').should('be.visible')
+    cy.get('button')
+      .contains('Submit')
+      .should('be.disabled')
+
+    // change amount to 50000.01 (still invalid - no decimals)
+    cy.get('input#amount')
+      .type('.01')
+      .should('have.class', 'is-invalid')
+      .clear()
+      .type('50000')
+      .should('have.class', 'is-invalid')
+    cy.get('#amount-validation').should('be.visible')
+    cy.get('button')
+      .contains('Submit')
+      .should('be.disabled')
+
+    // delete last 0 from 50000 and type 1 (valid)
+    cy.get('input#amount')
+      .type('{backspace}1')
+      .should('have.class', 'is-valid')
+    cy.get('#amount-validation').should('not.be.visible')
+    cy.get('button')
+      .contains('Submit')
+      .should('be.enabled')
+      .click()
+
+    // check url and data after submit
+    cy.location('pathname').should('equal', '/funding')
+    cy.get('.loan-card').should('have.length', 1)
+  })
+})

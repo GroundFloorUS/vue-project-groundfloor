@@ -1,6 +1,10 @@
 const sqlite3 = require('sqlite3').verbose()
 const path = require('path')
-let db = new sqlite3.Database(path.resolve(__dirname, 'groundfloor.db'))
+const dbfile =
+  process.env.NODE_ENV === 'test'
+    ? path.resolve(__dirname, 'groundfloor_test.db')
+    : path.resolve(__dirname, 'groundfloor.db')
+let db = new sqlite3.Database(dbfile)
 
 // NOTE:
 // This looks nothing like our actual database schema. :)

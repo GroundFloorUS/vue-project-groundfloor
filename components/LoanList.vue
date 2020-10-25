@@ -3,7 +3,7 @@
     <div v-if="!investments.length" class="empty-state">
       <slot name="empty-title">
         <h4>
-          On no!
+          Oh no!
         </h4>
       </slot>
       <slot name="empty-text">
