@@ -79,5 +79,5 @@ dist
 
 # IDE
 .idea
-/server/groundfloor.db
-/server/groundfloor_test.db
+server/groundfloor.db
+server/groundfloor_test.db
