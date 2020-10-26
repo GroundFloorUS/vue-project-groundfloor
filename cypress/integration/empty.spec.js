@@ -1,4 +1,4 @@
-describe('UI Interactions for List View', () => {
+describe('UI Interactions for app without data', () => {
   beforeEach(() => {
     cy.exec('npm run db:reset')
     cy.visit('/')

@@ -1,4 +1,4 @@
-describe('UI Interactions for List View', () => {
+describe('UI Interactions for app with existing data', () => {
   beforeEach(() => {
     cy.exec('npm run db:reset')
     cy.exec('npm run db:seed-investment')
