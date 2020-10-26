@@ -131,9 +131,8 @@ export default {
     async onSubmit(e) {
       e.preventDefault()
       if (this.isDisabled) return
-      let response
       try {
-        response = await this.$axios({
+        await this.$axios({
           method: 'post',
           url: '/api/funding',
           data: { amount: this.amount, investment_id: this.$route.params.id }
