@@ -47,6 +47,7 @@
                         v-model="investment_amount"
                         type="number"
                         name="investment_amount"
+                        step="1000"
                         @input="checkInvestmentAmount"
                         @focus="showInvestmentProgressBar"
                         @blur="hideInvestmentProgressBar"/>

@@ -61,6 +61,7 @@
                         v-model="loan_amount_dollars"
                         type="number"
                         name="loan_amount_dollars"
+                        step="1000"
                         @change="checkDollarValue"/>
         </b-input-group>
         <transition name="fade">
