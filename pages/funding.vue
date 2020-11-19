@@ -1,6 +1,6 @@
 <template>
   <b-container>
-    <h2 class="title mb-2">FUNDING</h2>
+    <h2 class="title mb-3">FUNDING</h2>
     <section class="investment_container d-flex">
       <b-card 
         v-for="investment in funding" 
@@ -50,7 +50,7 @@ export default {
    */
 .investment {
   margin-bottom: 1em;
-  box-shadow: inset 0 4px 0 #40a6cc;
+  box-shadow: inset 0 4px 0 #40a6cc, 0px 3px 12px rgba(0, 0, 0, 0.1);
   width: 48%;
   margin-right: 2%;
 }
