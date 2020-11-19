@@ -12,8 +12,8 @@
       </ul>
     </section>
 
-    <b-card class="investment_fund w-50 mb-3" title="Invest in this loan">
-      <b-form @submit="onSubmit">
+    <b-card class="investment_fund w-50 mb-3" title="Fund this loan">
+      <b-form @submit.prevent="onSubmit">
         <b-form-group label="Amount"
                       label-for="loan_amount_dollars">
           <b-input-group>
@@ -27,6 +27,10 @@
 
           </b-input-group>
         </b-form-group>
+        <input id="investment_id"
+               v-model="investment.id"
+               type="hidden"
+               name="investment_id">
         <b-button type="submit" variant="primary">Submit</b-button>
       </b-form>
     </b-card>
@@ -41,6 +45,11 @@
 </template>
 <script>
 export default {
+  data() {
+    return {
+      amount: 0
+    }
+  },
   async asyncData({ $axios, params }) {
     let investment = await $axios.get(`/api/investment/${params.id}`)
     let funds = await $axios.get(`/api/investment/${params.id}/funds`)
@@ -53,8 +62,20 @@ export default {
     goBack() {
       this.$router.back()
     },
-    onSubmit() {
-      // placeholder
+    async onSubmit() {
+      const b = {
+        amount: this.amount,
+        investment_id: this.investment.id
+      }
+      try {
+        const fund = await this.$axios({
+          method: 'post',
+          url: '/api/funding',
+          data: b
+        })
+      } catch (err) {
+        console.log(err)
+      }
     }
   }
 }
