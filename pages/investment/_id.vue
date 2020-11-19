@@ -11,6 +11,25 @@
         <!-- TODO: list all funds -->
       </ul>
     </section>
+
+    <b-card class="investment_fund w-50 mb-3" title="Invest in this loan">
+      <b-form @submit="onSubmit">
+        <b-form-group label="Amount"
+                      label-for="loan_amount_dollars">
+          <b-input-group>
+            <b-input-group-prepend>
+              <span class="input-group-text">$</span>
+            </b-input-group-prepend>
+            <b-form-input id="amount"
+                          v-model="amount"
+                          type="number"
+                          name="amount" />
+
+          </b-input-group>
+        </b-form-group>
+        <b-button type="submit" variant="primary">Submit</b-button>
+      </b-form>
+    </b-card>
     
     <p>
       <b-button type="button" vairant="success" @click="goBack">
@@ -33,6 +52,9 @@ export default {
   methods: {
     goBack() {
       this.$router.back()
+    },
+    onSubmit() {
+      // placeholder
     }
   }
 }
