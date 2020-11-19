@@ -2,6 +2,7 @@
   <b-container>
     <h2 class="title">BORROW</h2>
 
+
     <b-form @submit="onSubmit">
       <b-form-group label="Purpose"
                     label-for="purpose">
@@ -15,8 +16,14 @@
                     label-for="address">
         <b-form-input id="address"
                       v-model="address"
+                      :state="addressState"
                       type="text"
-                      name="address" />
+                      name="address"
+                      aria-describedby="address-feedback" />
+        <b-form-invalid-feedback id="address-feedback">
+          Address is required
+        </b-form-invalid-feedback>
+
       </b-form-group>
       
       <b-form-group label="Rate"
@@ -24,11 +31,16 @@
         <b-input-group>
           <b-form-input id="rate"
                         v-model="rate"
+                        :state="rateState"
                         type="number"
-                        name="rate"/>
+                        name="rate"
+                        aria-describedby="rate_feedback"/>
           <b-input-group-append>
             <span class="input-group-text">%</span>
           </b-input-group-append>
+          <b-form-invalid-feedback id="rate_feedback">
+            Rate must be at least 5%
+          </b-form-invalid-feedback>
         </b-input-group>
       </b-form-group>
 
@@ -53,8 +65,13 @@
           </b-input-group-prepend>
           <b-form-input id="loan_amount_dollars"
                         v-model="loan_amount_dollars"
+                        :state="loanAmountDollarsState"
                         type="number"
-                        name="loan_amount_dollars"/>
+                        name="loan_amount_dollars"
+                        aria-describedby="loan_amount_dollars_feedback"/>
+          <b-form-invalid-feedback id="loan_amount_dollars_feedback">
+            Loan amount must be at least $50,000
+          </b-form-invalid-feedback>
         </b-input-group>
       </b-form-group>
 
@@ -84,10 +101,38 @@ export default {
       loan_amount_dollars: 100000
     }
   },
+  computed: {
+    addressState() {
+      return this.validateField(this.address, 'required')
+    },
+    rateState() {
+      return this.validateField(this.rate, 'aboveMinimum', { min: 5 })
+    },
+    loanAmountDollarsState() {
+      return this.validateField(this.loan_amount_dollars, 'aboveMinimum', {
+        min: 50000
+      })
+    }
+  },
   methods: {
+    validateField(field, rule, options) {
+      const validations = {
+        required: val => !!val.length,
+        aboveMinimum: val => val > options.min
+      }
+      return validations[rule](field, options)
+    },
     async onSubmit(ev) {
       ev.preventDefault()
       let { address, rate, expected_term_months, loan_amount_dollars } = this
+
+      const passesValidations =
+        this.validateField(address, 'required') &&
+        this.validateField(rate, 'aboveMinimum', { min: 5 }) &&
+        this.validateField(loan_amount_dollars, 'aboveMinimum', { min: 50000 })
+
+      if (!passesValidations) return false
+
       let b = {
         purpose: this.purpose.value,
         address,
