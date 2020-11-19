@@ -8,7 +8,9 @@
     <section class="investment_funds">
       <h3 class="subtitle">Loan Funds</h3>
       <ul>
-        <!-- TODO: list all funds -->
+        <li v-for="fund in funds" :key="fund.id">
+          ${{ fund.amount.toLocaleString() }}
+        </li>
       </ul>
     </section>
 
