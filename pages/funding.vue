@@ -32,7 +32,6 @@
 export default {
   async asyncData({ $axios }) {
     let funding = await $axios.get('/api/funding')
-    console.log(funding.data)
     return {
       funding: funding.data
     }
@@ -45,9 +44,6 @@ export default {
   flex-wrap: wrap;
 }
 
-/* I debated on a two vs. three column layout here. I'm assuming that users want to peruse funding here, 
-   similar to something like Pinterest. I think three columns makes that a bit easier, but it also felt a bit cramped. 
-   */
 .investment {
   margin-bottom: 1em;
   box-shadow: inset 0 4px 0 #40a6cc, 0px 3px 12px rgba(0, 0, 0, 0.1);

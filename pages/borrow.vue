@@ -1,8 +1,6 @@
 <template>
   <b-container>
     <h2 class="title">BORROW</h2>
-
-
     <b-form @submit="onSubmit">
       <b-form-group label="Purpose"
                     label-for="purpose">
