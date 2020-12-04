@@ -12,6 +12,7 @@ export default {
       },
       isSubmitted: false,
       address: '',
+      grade: "A",
       rate: 10,
       expected_term_months: 12,
       loan_amount_dollars: 50000
@@ -22,9 +23,15 @@ export default {
     isAddressValid() {
       return this.isSubmitted ? !!this.address : null;
     },
+    isGradeValid() {
+      return this.isSubmitted ? ['A', 'B', 'C', 'D', 'E', 'F', 'G'].include(this.grade) : null;
+    },
     // But hey, if we're gonna do bare bones let's do it right. This is 100% overkill for this hardcoded string but using computed for these messages will give us some flexibility.
     addressInvalidFeedback() {
       return 'Please enter a valid address';
+    },
+    gradeInvalidFeedback() {
+      return 'Please enter a valid grade';
     },
     isRateValid() {
       return this.isSubmitted ? this.rate > 5 : null;
@@ -59,11 +66,12 @@ export default {
       return new Promise((resolve, reject) => {
         if (this.isFormValid) {
           // I dunno if i'd normally destructure 'this', but if we're gonna let's go all the way
-          let { address, rate, expected_term_months, loan_amount_dollars, $axios, purpose } = this
+          let { grade, address, rate, expected_term_months, loan_amount_dollars, $axios, purpose } = this
           let data = {
             purpose: purpose.value,
             address,
             rate,
+            grade,
             expected_term_months,
             loan_amount_dollars
           }
