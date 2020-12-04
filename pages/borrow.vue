@@ -42,6 +42,23 @@
 
       <b-form-group
         :validated="isSubmitted"
+        :state="isGradeValid"
+        :invalid-feedback="gradeInvalidFeedback"
+        label="Grade"
+        label-for="gradee"
+      >
+        <b-form-input
+          id="grade"
+          :state="isGradeValid"
+          v-model="grade"
+          type="text"
+          name="grade"
+          required
+        />
+      </b-form-group>
+
+      <b-form-group
+        :validated="isSubmitted"
         :state="isRateValid"
         :invalid-feedback="rateInvalidFeedback"
         label="Rate"
