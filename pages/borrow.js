@@ -65,30 +65,30 @@ export default {
 
       return new Promise((resolve, reject) => {
         if (this.isFormValid) {
-          // I dunno if i'd normally destructure 'this', but if we're gonna let's go all the way
-          let { grade, address, rate, expected_term_months, loan_amount_dollars, $axios, purpose } = this
-          let data = {
-            purpose: purpose.value,
-            address,
-            rate,
-            grade,
-            expected_term_months,
-            loan_amount_dollars
-          }
-
-          $axios({
-            method: 'post',
-            url: '/api/investment',
-            data,
-          })
-            .then(() => {
-              this.$router.push({ path: '/funding' })
-            })
-            .catch(reject);
-        } else {
           reject();
+          return
         }
-      });
-    }
+        // I dunno if i'd normally destructure 'this', but if we're gonna let's go all the way
+        let { grade, address, rate, expected_term_months, loan_amount_dollars, $axios, purpose } = this
+        let data = {
+          purpose: purpose.value,
+          address,
+          rate,
+          grade,
+          expected_term_months,
+          loan_amount_dollars
+        }
+
+        $axios({
+          method: 'post',
+          url: '/api/investment',
+          data,
+        })
+          .then(() => {
+            this.$router.push({ path: '/funding' })
+          })
+          .catch(reject);
+      })
+    };
   }
 }
