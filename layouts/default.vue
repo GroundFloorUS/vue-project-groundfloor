@@ -69,4 +69,12 @@ html {
 main {
   margin-top: 2em;
 }
+
+.input--invalid {
+  border-color: red;
+}
+.error-msg {
+  font-size: 0.75em;
+  color: red;
+}
 </style>

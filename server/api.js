@@ -118,29 +118,57 @@ api.post('/investment', (req, res, next) => {
 
 api.post('/funding', (req, res, next) => {
   let { investment_id, amount } = req.body
-
   db.serialize(() => {
-    db.run(
-      `INSERT INTO funding
-        (investment_id, amount)
-       VALUES (?, ?);
-      `,
-      [investment_id, amount],
-      err => {
+    db.get(
+      `SELECT (investment.loan_amount_dollars - SUM(amount)) AS balance, fully_funded
+       FROM funding
+                JOIN investment ON funding.investment_id = investment.id
+       WHERE funding.investment_id = ?`,
+      [Number(investment_id)],
+      (err, row) => {
         if (err) {
           next(err)
         }
-        db.get(
-          `SELECT id, investment_id, amount, created_on
-           FROM funding WHERE rowid = ?`,
-          [this.lastID],
-          (err, row) => {
-            if (err) {
-              next(err)
+        if (row.balance !== null && row.balance <= 0) {
+          db.run(
+            `UPDATE investment
+               SET fully_funded = 1
+               WHERE id = ?`,
+            [Number(investment_id)],
+            (err, row) => {
+              if (err) {
+                next(err)
+              }
             }
-            res.json(row)
-          }
-        )
+          )
+          row.fully_funded = 1
+          res.json(row)
+        } else {
+          db.run(
+            `INSERT INTO funding
+                 (investment_id, amount)
+             VALUES (?, ?);
+            `,
+            [investment_id, amount],
+            err => {
+              if (err) {
+                next(err)
+              }
+              db.get(
+                `SELECT id, investment_id, amount, created_on
+                 FROM funding
+                 WHERE rowid = ?`,
+                [this.lastID],
+                (err, row) => {
+                  if (err) {
+                    next(err)
+                  }
+                  res.json(row)
+                }
+              )
+            }
+          )
+        }
       }
     )
   })

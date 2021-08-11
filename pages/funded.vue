@@ -8,7 +8,9 @@
           {{ investment.address }}
         </nuxt-link>
         <p>
-          {{ investment.loan_amount_dollars }}
+          {{ `$${new Intl.NumberFormat('en-US', {
+            style: 'decimal'
+          }).format(investment.loan_amount_dollars)}` }}
         </p>
       </li>
     </ul>

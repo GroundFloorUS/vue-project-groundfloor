@@ -15,7 +15,7 @@
                     label-for="address">
         <b-form-input id="address"
                       v-model="address"
-                      :class="{'input-invalid': errors.address.inValid}"
+                      :class="{'input--invalid': errors.address.inValid}"
                       type="text"
                       name="address" />
         <span
@@ -30,11 +30,11 @@
         <b-input-group>
           <b-form-input id="rate"
                         v-model="rate"
-                        :class="{'input-invalid': errors.rate.inValid}"
+                        :class="{'input--invalid': errors.rate.inValid}"
                         type="number"
                         name="rate"/>
           <b-input-group-append>
-            <span :class="{'input-invalid': errors.rate.inValid}" class="input-group-text">%</span>
+            <span :class="{'input--invalid': errors.rate.inValid}" class="input-group-text">%</span>
           </b-input-group-append>
         </b-input-group>
         <span
@@ -61,11 +61,11 @@
                     label-for="loan_amount_dollars">
         <b-input-group>
           <b-input-group-prepend>
-            <span :class="{'input-invalid': errors.rate.inValid}" class="input-group-text">$</span>
+            <span :class="{'input--invalid': errors.rate.inValid}" class="input-group-text">$</span>
           </b-input-group-prepend>
           <b-form-input id="loan_amount_dollars"
                         v-model="loan_amount_dollars"
-                        :class="{'input-invalid': errors.loan.inValid}"
+                        :class="{'input--invalid': errors.loan.inValid}"
                         type="number"
                         name="loan_amount_dollars"/>
         </b-input-group>
@@ -119,12 +119,15 @@ export default {
   methods: {
     async onSubmit(ev) {
       ev.preventDefault()
+
       this.validateForm()
+
       for (const error in this.errors) {
         if (this.errors[error].inValid) {
           return false
         }
       }
+
       let { address, rate, expected_term_months, loan_amount_dollars } = this
       let b = {
         purpose: this.purpose.value,
@@ -133,27 +136,21 @@ export default {
         expected_term_months,
         loan_amount_dollars
       }
+
       let investment = await this.$axios({
         method: 'post',
         url: '/api/investment',
         data: b
       })
-      this.$router.push({ path: `/funding` })
+
+      await this.$router.push({ path: `/funding` })
     },
     validateForm() {
-      this.errors.address.inValid = this.address === ''
-      this.errors.rate.inValid = this.rate <= 5
-      this.errors.loan.inValid = this.loan_amount_dollars <= 50000
+      let { address, rate, loan_amount_dollars } = this
+      this.errors.address.inValid = address === ''
+      this.errors.rate.inValid = rate <= 5
+      this.errors.loan.inValid = loan_amount_dollars <= 50000
     }
   }
 }
 </script>
-<style scoped>
-.input-invalid {
-  border-color: red;
-}
-.error-msg {
-  font-size: 0.75em;
-  color: red;
-}
-</style>
