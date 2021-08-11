@@ -120,7 +120,11 @@ export default {
     async onSubmit(ev) {
       ev.preventDefault()
       this.validateForm()
-      return
+      for (const error in this.errors) {
+        if (this.errors[error].inValid) {
+          return false
+        }
+      }
       let { address, rate, expected_term_months, loan_amount_dollars } = this
       let b = {
         purpose: this.purpose.value,
